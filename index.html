@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forsaken Atlas · панель</title>
+<!-- Мініпрограма бота Forsaken Atlas (16.11.2026). Статична сторінка без сервера: усі дані приходять у самій адресі (параметр ?d=; їх туди кладе бот на ПК автора
+     в момент оновлення кнопки). Сама сторінка нічого нікуди не надсилає; натиск «Показати в чаті» лише відкриває чат із ботом із позначкою відео. -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0d0d0e;--card:#161618;--line:#26262a;--txt:#f4f1ea;--dim:#8f8f98;--gold:#d6a63e;--acc:#a04e30;--acc2:#c9694a;--ok:#7ec48a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.35 -apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+body{min-height:100vh;padding:18px 14px 28px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420' fill='none' stroke='%23d6a63e' stroke-opacity='.13'><path d='M30 210c0-90 70-170 180-170s190 60 180 170-90 180-190 180S30 300 30 210z'/><path d='M80 215c0-65 50-120 130-120s135 45 128 120-62 128-134 128S80 280 80 215z'/><path d='M132 218c0-40 30-74 78-74s82 28 78 74-38 78-80 78-76-38-76-78z'/><path d='M176 220c0-18 14-34 36-34s38 13 36 34-17 36-37 36-35-18-35-36z'/><path d='M-40 60c60 30 110-40 170-20M300 400c40-50 110-30 160-70M-20 380c50-10 70-60 130-50'/></svg>");background-size:420px}
+.hd{display:flex;align-items:center;gap:12px;margin:2px 2px 16px}
+.pin{width:44px;height:44px;border-radius:50%;background:var(--acc);display:grid;place-items:center;font-weight:800;color:#fff;letter-spacing:.5px}
+.hd small{display:block;color:var(--gold);font-size:11px;letter-spacing:2.2px;font-weight:700}
+.hd b{font-size:19px;font-weight:700}
+.card{background:rgba(22,22,24,.94);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;margin:0 0 12px}
+h2{margin:0 0 10px;font-size:11px;letter-spacing:2.2px;color:var(--gold);font-weight:700}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:9px 0 5px}
+.row span{color:var(--dim);font-size:13px;text-align:right}
+.bar{height:8px;border-radius:6px;background:#27272c;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+.bar i.warn{background:linear-gradient(90deg,#c98a2a,#e0b24a)} .bar i.bad{background:linear-gradient(90deg,#b8322a,#e0584a)}
+.big{font-size:30px;font-weight:800;letter-spacing:-.5px} .big em{font-style:normal;color:var(--dim);font-size:14px;font-weight:500;margin-left:8px}
+.note{color:var(--dim);font-size:12.5px;margin-top:8px}
+.p{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)} .p:first-of-type{border-top:0}
+.p .n{width:26px;color:var(--dim);font-variant-numeric:tabular-nums} .p .t{flex:1} .p .s{font-size:12.5px;color:var(--dim);text-align:right}
+.p .dot{width:9px;height:9px;border-radius:50%;background:#3a3a40} .ok .dot{background:var(--ok)} .sent .dot{background:var(--gold)} .redo .dot,.queue .dot{background:var(--acc2)}
+.v{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)} .v:first-of-type{border-top:0} .v .t{flex:1;font-weight:600}
+button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#fff;font:600 13.5px/1 inherit;padding:10px 13px} button:active{background:#8a4228}
+.ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="hd"><div class="pin">FA</div><div><small>FORSAKEN ATLAS</small><b id="ttl">Панель серії</b></div></div>
+<div id="app"><div class="card"><div class="note">Немає даних. Відкрий панель кнопкою бота — тоді сюди прийдуть свіжі цифри.</div></div></div>
+<div class="ft" id="ft"></div>
+<script>
+(function(){
+  var tg = window.Telegram && Telegram.WebApp; if (tg) { try { tg.ready(); tg.expand(); tg.setHeaderColor('#0d0d0e'); tg.setBackgroundColor('#0d0d0e'); } catch (e) {} }
+  // дані: параметр ?d= в адресі (Telegram дописує до адреси власні параметри після «#», тому «#» для своїх даних ненадійний); запасний шлях — перший шматок після «#»
+  var h = new URLSearchParams(location.search).get('d') || (location.hash.slice(1).split('&').filter(function (s) { return s && s.indexOf('=') < 0; })[0] || ''); if (!h) return; var d;
+  try { d = JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return; }
+  var E = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); };
+  var bar = function (f) { var p = Math.max(0, Math.min(100, Math.round(f * 100))); return '<div class="bar"><i class="' + (f >= .9 ? 'bad' : f >= .7 ? 'warn' : '') + '" style="width:' + p + '%"></i></div>'; };
+  var o = '';
+  if (d.r) o += '<div class="card"><h2>РЕНДЕР ЗАРАЗ</h2><div class="big">' + Math.round(d.r.p * 100) + ' %<em>' + E(d.r.n) + ' · ще ~' + E(d.r.l) + ' хв</em></div>' + bar(d.r.p) + '</div>';
+  else o += '<div class="card"><h2>РЕНДЕР</h2><div class="note" style="margin:0">Зараз нічого не рендериться.</div></div>';
+  o += '<div class="card"><h2>ЛІМІТИ</h2>';
+  (d.c || []).forEach(function (x) { o += '<div class="row"><b>Claude · ' + E(x[0]) + ' — ' + Math.round(x[1] * 100) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1]); });
+  if (d.g) o += '<div class="row"><b>Gemini · сьогодні</b><span>' + E(d.g) + '</span></div>';
+  (d.pc || []).forEach(function (x) { o += '<div class="row"><b>' + E(x[0]) + ' — ' + Math.round(x[1] * 100) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1]); });
+  o += '<div class="note">Гроші й залишок Gemini тут не видно — лише в Google AI Studio.</div></div>';
+  if (d.s && d.s.length) { var okc = d.s.filter(function (x) { return x[2] == 'ok'; }).length;
+    o += '<div class="card"><h2>СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length + '</h2>';
+    d.s.forEach(function (x) { o += '<div class="p ' + E(x[2]) + '"><div class="n">' + E(x[0]) + '</div><div class="dot"></div><div class="t">' + E(x[1]) + '</div><div class="s">' + E(x[3]) + '</div></div>'; }); o += '</div>'; }
+  if (d.v && d.v.length) { o += '<div class="card"><h2>ВІДЕО В ЧАТІ</h2>';
+    d.v.forEach(function (x) { o += '<div class="v"><div class="t">' + E(x[1]) + '</div><button data-m="' + E(x[0]) + '">Показати в чаті</button></div>'; }); o += '</div>'; }
+  document.getElementById('app').innerHTML = o; document.getElementById('ft').textContent = 'дані на ' + (d.t || '') + ' · щоб оновити, закрий і відкрий панель';
+  document.getElementById('app').addEventListener('click', function (e) { var m = e.target && e.target.getAttribute && e.target.getAttribute('data-m'); if (!m || !d.b) return;
+    var u = 'https://t.me/' + d.b + '?start=v' + m; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else location.href = u; });
+})();
+</script>
+</body>
+</html>
