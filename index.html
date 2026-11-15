@@ -51,6 +51,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .pt{position:fixed;left:50%;top:0;width:44px;height:44px;border-radius:50%;background:var(--card);border:1.5px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-size:21px;transform:translate(-50%,-52px);opacity:0;z-index:8;transition:opacity .15s} .pt.go{background:var(--gold);color:#111}
 .mini{padding:8px 10px;border-radius:10px;font-size:15px;background:#1f3a26;flex:none} .mini.alt{background:#2a2a30}
 .c{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)} .c:first-of-type{border-top:0} .c input{width:21px;height:21px;accent-color:var(--acc);flex:none;margin:0} .c input:checked+span{color:var(--dim);text-decoration:line-through}
+#plr{padding:2px 0 12px} #plr video{width:100%;border-radius:12px;background:#000;display:block}
 .ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px}
 </style>
 </head>
@@ -89,7 +90,8 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       o += '<div class="card"><h2>СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length + '</h2>';
       d.s.forEach(function (x) { o += '<div class="p ' + E(x[2]) + '"><div class="n">' + E(x[0]) + '</div><div class="dot"></div><div class="t">' + E(x[1]) + '</div><div class="s">' + E(x[3]) + '</div>' + (x[2] == 'sent' && x[4] ? '<button class="mini" data-ok="' + E(x[4]) + '" data-t="' + E(x[1]) + '">✅</button><button class="mini alt" data-fx="' + E(x[4]) + '">✏️</button>' : '') + '</div>'; }); o += '</div>'; }
     if (d.v && d.v.length) { o += '<div class="card"><h2>ВІДЕО В ЧАТІ</h2>';
-      d.v.forEach(function (x) { o += '<div class="v"><div class="t">' + E(x[1]) + '</div><button data-m="' + E(x[0]) + '">Показати в чаті</button></div>'; }); o += '</div>'; }
+      d.v.forEach(function (x) { var pl = d.vb && x[2]; o += '<div class="v"><div class="t">' + E(x[1]) + '</div>' + (pl ? '<button data-p="' + E(d.vb + x[2]) + '">▶ Дивитись</button>' : '')
+        + '<button class="' + (pl ? 'mini alt' : '') + '" data-m="' + E(x[0]) + '">' + (pl ? '💬' : 'Показати в чаті') + '</button></div>'; }); o += '</div>'; }
     o += '<div class="card"><h2>ПЕРЕД ПУБЛІКАЦІЄЮ</h2>' + CHK.map(function (t, i) { return '<label class="c"><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span>' + E(t) + '</span></label>'; }).join('') + '<div class="note">Позначки зберігаються в тебе в Telegram; директор їх не бачить.</div></div>';
     app.innerHTML = o; ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
   }
@@ -124,6 +126,10 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   else if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('g', function (err, v) { if (!err && v) { G = v; try { localStorage.setItem('fa_g', G); } catch (e) {} start(); } else nodata(); }); } catch (e) { nodata(); } }
   else nodata();
   app.addEventListener('click', function (e) { var el = e.target; if (!el || !el.getAttribute) return;
+    var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
+    if (pv) { var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv; if (old) old.remove();
+      if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); w.innerHTML = '<video controls playsinline autoplay preload="metadata" src="' + E(pv) + '"></video>'; el.parentNode.insertAdjacentElement('afterend', w); }
+      return; }
     var go = function (p) { var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=' + p; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else location.href = u; };
     var m = el.getAttribute('data-m'), ok = el.getAttribute('data-ok'), fx = el.getAttribute('data-fx');
     if (m) go('v' + m); else if (fx) go('fix' + fx);
