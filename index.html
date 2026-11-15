@@ -90,9 +90,11 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   }
   function refresh() {
     if (!G) return; var t0 = Date.now(); rf.disabled = true; rf.classList.add('on'); app.classList.add('ld'); pg.classList.add('on');
-    fetch('https://api.github.com/gists/' + encodeURIComponent(G), {cache: 'no-store', headers: {'Accept': 'application/vnd.github+json'}})
-      .then(function (r) { if (!r.ok) throw new Error('код ' + r.status); return r.json(); })
-      .then(function (j) { var f = j.files && j.files['data.json']; if (!f) throw new Error('нема файла'); return f.truncated ? fetch(f.raw_url, {cache: 'no-store'}).then(function (r) { return r.text(); }) : f.content; })
+    // 16.11, 01:07 — читаємо «сирий» файл gist, а не api.github.com: в API без входу ліміт 60 запитів на годину з однієї адреси, а в мобільній мережі адреса
+    // спільна на багатьох людей — автор одразу отримав «код 403». У сирого файла такого ліміту нема; параметр ?t= не дає віддати стару копію з пам'яті
+    var own = /\.github\.io$/.test(location.hostname) ? location.hostname.split('.')[0] : 'Fenix48';
+    fetch('https://gist.githubusercontent.com/' + own + '/' + encodeURIComponent(G) + '/raw/data.json?t=' + Date.now(), {cache: 'no-store'})
+      .then(function (r) { if (!r.ok) throw new Error('код ' + r.status); return r.text(); })
       .then(function (t) { return new Promise(function (ok) { setTimeout(function () { ok(t); }, Math.max(0, 650 - (Date.now() - t0))); }); })      // щоб анімацію було видно й на швидкій мережі
       .then(function (t) { render(JSON.parse(t), 'оновлено щойно'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
       .catch(function (e) { ft.textContent = e.message == 'код 404'
