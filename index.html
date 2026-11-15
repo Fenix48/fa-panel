@@ -58,6 +58,10 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 (function(){
   var tg = window.Telegram && Telegram.WebApp; if (tg) { try { tg.ready(); tg.expand(); tg.setHeaderColor('#0d0d0e'); tg.setBackgroundColor('#0d0d0e'); } catch (e) {} }
   var P = new URLSearchParams(location.search), G = P.get('g') || '', app = document.getElementById('app'), ft = document.getElementById('ft'), rf = document.getElementById('rf'), pg = document.getElementById('pg'), D = null;
+  // 16.11, 00:44 — через Main App (кнопка «Відкрити» в списку чатів) Telegram відкриває сторінку БЕЗ параметрів адреси, тому секретну частину ?g= панель
+  // запам'ятовує на цьому пристрої (localStorage) і в сховищі Telegram для цього бота й користувача (CloudStorage), коли її хоч раз відкрили кнопкою з чату
+  try { if (G) localStorage.setItem('fa_g', G); else G = localStorage.getItem('fa_g') || ''; } catch (e) {}
+  if (G && tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('g', G); } catch (e) {} }
   var E = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); };
   var bar = function (f) { var p = Math.max(0, Math.min(100, Math.round(f * 100))); return '<div class="bar"><i class="' + (f >= .9 ? 'bad' : f >= .7 ? 'warn' : '') + '" style="width:' + p + '%"></i></div>'; };
   function dec(h) { try { return JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return null; } }
@@ -99,8 +103,13 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     var k = pull(); pt.style.transform = 'translate(-50%,' + (k - 52) + 'px) rotate(' + (k * 4) + 'deg)'; pt.style.opacity = Math.min(1, k / 55); pt.classList.toggle('go', k >= 62); }, {passive: true});
   window.addEventListener('touchend', function () { if (y0 === null) return; var k = pull(); y0 = null; pt.style.transform = ''; pt.style.opacity = 0; pt.classList.remove('go'); if (k >= 62) refresh(); }, {passive: true});
   var h = P.get('d') || (location.hash.slice(1).split('&').filter(function (s) { return s && s.indexOf('=') < 0; })[0] || ''), d0 = h ? dec(h) : null;
-  if (d0) render(d0, ''); else if (!G) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Немає даних. Відкрий панель кнопкою бота — тоді сюди прийдуть свіжі цифри.</div></div>';
-  if (G) { rf.style.display = ''; rf.addEventListener('click', refresh); refresh(); }
+  var nodata = function () { if (!D) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Немає даних. Один раз відкрий панель кнопкою «Панель» у чаті з ботом — після цього вона працюватиме й звідси.</div></div>'; };
+  var start = function () { rf.style.display = ''; refresh(); };
+  rf.addEventListener('click', refresh);
+  if (d0) render(d0, '');
+  if (G) start();
+  else if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('g', function (err, v) { if (!err && v) { G = v; try { localStorage.setItem('fa_g', G); } catch (e) {} start(); } else nodata(); }); } catch (e) { nodata(); } }
+  else nodata();
   app.addEventListener('click', function (e) { var m = e.target && e.target.getAttribute && e.target.getAttribute('data-m'); if (!m) return;
     var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=v' + m; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else location.href = u; });
 })();
