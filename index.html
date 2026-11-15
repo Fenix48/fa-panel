@@ -12,7 +12,7 @@
 <style>
 :root{--bg:#0d0d0e;--card:#161618;--line:#26262a;--txt:#f4f1ea;--dim:#8f8f98;--gold:#d6a63e;--acc:#a04e30;--acc2:#c9694a;--ok:#7ec48a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.35 -apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+html,body{margin:0;overscroll-behavior-y:contain;background:var(--bg);color:var(--txt);font:15px/1.35 -apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif}
 body{min-height:100vh;padding:18px 14px 28px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420' fill='none' stroke='%23d6a63e' stroke-opacity='.13'><path d='M30 210c0-90 70-170 180-170s190 60 180 170-90 180-190 180S30 300 30 210z'/><path d='M80 215c0-65 50-120 130-120s135 45 128 120-62 128-134 128S80 280 80 215z'/><path d='M132 218c0-40 30-74 78-74s82 28 78 74-38 78-80 78-76-38-76-78z'/><path d='M176 220c0-18 14-34 36-34s38 13 36 34-17 36-37 36-35-18-35-36z'/><path d='M-40 60c60 30 110-40 170-20M300 400c40-50 110-30 160-70M-20 380c50-10 70-60 130-50'/></svg>");background-size:420px}
 .hd{display:flex;align-items:center;gap:12px;margin:2px 2px 16px}
 .hd .w{flex:1;min-width:0}
@@ -43,11 +43,14 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .bar i{animation:grow .8s cubic-bezier(.2,.8,.2,1) both} @keyframes grow{from{width:0}}
 .pg{position:fixed;left:0;top:0;height:3px;width:100%;z-index:9;display:none;background:linear-gradient(90deg,transparent,var(--gold),transparent) no-repeat;background-size:45% 100%;animation:sweep .9s linear infinite} .pg.on{display:block}
 @keyframes sweep{from{background-position:-45% 0}to{background-position:145% 0}}
+/* 16.11, 00:36 — автор: «щоб свайпнути — теж оновлювалась сторінка»: потягни вниз від верху */
+.pt{position:fixed;left:50%;top:0;width:44px;height:44px;border-radius:50%;background:var(--card);border:1.5px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-size:21px;transform:translate(-50%,-52px);opacity:0;z-index:8;transition:opacity .15s} .pt.go{background:var(--gold);color:#111}
 .ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px}
 </style>
 </head>
 <body>
 <div class="pg" id="pg"></div>
+<div class="pt" id="pt">⟳</div>
 <div class="hd"><div class="pin">FA</div><div class="w"><small>FORSAKEN ATLAS</small><b>Панель серії</b></div><button id="rf" class="rf" style="display:none"><span class="ic">⟳</span>Оновити</button></div>
 <div id="app"><div class="card"><div class="note" style="margin:0">Завантажую дані…</div></div></div>
 <div class="ft" id="ft"></div>
@@ -88,6 +91,13 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
         if (!D) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Даних нема — дивись підказку нижче.</div></div>'; })
       .then(function () { rf.disabled = false; rf.classList.remove('on'); app.classList.remove('ld'); pg.classList.remove('on'); });
   }
+  // потягни вниз — оновити. Telegram сам закриває мініпрограму свайпом униз, тому цей його жест вимикаємо (закрити можна хрестиком)
+  if (tg && tg.disableVerticalSwipes) { try { tg.disableVerticalSwipes(); } catch (e) {} }
+  var pt = document.getElementById('pt'), y0 = null, dy = 0, pull = function () { return Math.max(0, Math.min(dy * .5, 92)); };
+  window.addEventListener('touchstart', function (e) { if (G && window.scrollY <= 0 && !rf.disabled) { y0 = e.touches[0].clientY; dy = 0; } else y0 = null; }, {passive: true});
+  window.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = e.touches[0].clientY - y0; if (window.scrollY > 0) { dy = 0; }
+    var k = pull(); pt.style.transform = 'translate(-50%,' + (k - 52) + 'px) rotate(' + (k * 4) + 'deg)'; pt.style.opacity = Math.min(1, k / 55); pt.classList.toggle('go', k >= 62); }, {passive: true});
+  window.addEventListener('touchend', function () { if (y0 === null) return; var k = pull(); y0 = null; pt.style.transform = ''; pt.style.opacity = 0; pt.classList.remove('go'); if (k >= 62) refresh(); }, {passive: true});
   var h = P.get('d') || (location.hash.slice(1).split('&').filter(function (s) { return s && s.indexOf('=') < 0; })[0] || ''), d0 = h ? dec(h) : null;
   if (d0) render(d0, ''); else if (!G) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Немає даних. Відкрий панель кнопкою бота — тоді сюди прийдуть свіжі цифри.</div></div>';
   if (G) { rf.style.display = ''; rf.addEventListener('click', refresh); refresh(); }
