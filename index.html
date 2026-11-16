@@ -122,6 +122,12 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .sh{height:10px;border-radius:6px;margin:11px 0;background:linear-gradient(90deg,#1f1f23 20%,#35353b 50%,#1f1f23 80%);background-size:220% 100%;animation:shm 1.25s linear infinite}
 @keyframes shm{from{background-position:130% 0}to{background-position:-90% 0}}
 @media (prefers-reduced-motion:reduce){.sent .dot:after,.bar.live i:after{display:none} .sh{animation:none}}
+/* 16.11.2026 — широке вікно і програма для ПК (fa_panel_pc.pyw): дві колонки, миша, клавіші (qc/patch_miniapp_pc1_15.py) */
+.col{display:contents}
+@media (min-width:880px){body{padding:22px 22px 30px} #app{display:flex;gap:14px;align-items:flex-start} #app>.card{flex:1} .col{display:block;flex:1;min-width:0} .hd,#app,.ft{max-width:1180px;margin-left:auto;margin-right:auto}}
+@media (hover:hover){button,.c,.c input,.pl .sk{cursor:pointer} .v>button:hover,.p>button:hover{filter:brightness(1.14)} .rf:hover{background:rgba(214,166,62,.1)} .pl .pb:hover,.pl .side:hover{background:rgba(255,255,255,.16)} .pl .bigp:hover{background:#b65a39} .pl.on.idle{cursor:none} .card{transition:border-color .25s} .card:hover{border-color:#3a352a}
+  html{scrollbar-color:#2e2e33 #0d0d0e} ::-webkit-scrollbar{width:10px} ::-webkit-scrollbar-thumb{background:#2e2e33;border-radius:6px} ::-webkit-scrollbar-track{background:#0d0d0e}}
+.pl.hov .pvw{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -134,7 +140,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 <div class="toast" id="toast"></div>
 <script>
 (function(){
-  if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {} }      // щоб панель можна було встановити як додаток
+  if (!window.FA_LOCAL && 'serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {} }      // щоб панель можна було встановити як додаток
   var tg = window.Telegram && Telegram.WebApp; if (tg) { try { tg.ready(); tg.expand(); tg.setHeaderColor('#0d0d0e'); tg.setBackgroundColor('#0d0d0e'); } catch (e) {} }
   var P = new URLSearchParams(location.search), G = P.get('g') || '', app = document.getElementById('app'), ft = document.getElementById('ft'), rf = document.getElementById('rf'), pg = document.getElementById('pg'), D = null;
   // 16.11, 00:44 — через Main App (кнопка «Відкрити» в списку чатів) Telegram відкриває сторінку БЕЗ параметрів адреси, тому секретну частину ?g= панель
@@ -144,6 +150,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var okG = function (s) { return /^[0-9a-f]{32}$/i.test(s || ''); }; if (!okG(G)) G = '';
   try { if (G) localStorage.setItem('fa_g', G); else { G = localStorage.getItem('fa_g') || ''; if (!okG(G)) G = ''; } } catch (e) {}
   if (G && tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('g', G); } catch (e) {} }
+  var LOC = !!window.FA_LOCAL; if (LOC) G = 'pc';      // програма для ПК (fa_panel_pc.pyw): сторінку й дані віддає сам ПК, секретна частина адреси не потрібна
   var E = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); };
   // 16.11.2026 — анімації по всій панелі. PV — попередні значення: числа «доїжджають» від старого до нового, смужки ростуть від старої ширини;
   // --i — номер рядка в картці (рядки з'являються каскадом). Числа в розмітці завжди справжні — анімація лише тимчасово підміняє текст
@@ -185,14 +192,20 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     var kick = function (b) { b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); };      // запустити анімацію кнопки заново
     var onfs = function () { if (CUR !== me) { document.removeEventListener('fullscreenchange', onfs); return; } fs.innerHTML = (document.fullscreenElement || document.webkitFullscreenElement) ? FSO : FSI; kick(fs); };
     document.addEventListener('fullscreenchange', onfs);
+    // клавіатура (ПК): пробіл / K — грати-пауза, ← → — 10 с, F — на весь екран, Esc — вийти з власного повноекранного режиму
+    var onkey = function (e) { if (CUR !== me) { document.removeEventListener('keydown', onkey); return; } if (e.ctrlKey || e.altKey || e.metaKey || /INPUT|TEXTAREA/.test((e.target && e.target.tagName) || '')) return;
+      var k = e.key; if (k == ' ' || k == 'k' || k == 'K' || k == 'л' || k == 'Л') { e.preventDefault(); tog(); show(); } else if (k == 'ArrowLeft') { e.preventDefault(); kick(q('.bk')); jump(-10); }
+      else if (k == 'ArrowRight') { e.preventDefault(); kick(q('.fw')); jump(10); } else if (k == 'f' || k == 'F' || k == 'а' || k == 'А') { e.preventDefault(); fs.click(); }
+      else if (k == 'Escape' && w.classList.contains('fsx')) pfs(false); };
+    document.addEventListener('keydown', onkey);
     var upd = function () { if (drag) return; var d = v.duration || 0, x = d ? v.currentTime / d : 0; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(v.currentTime); dur.textContent = fmt(d);
       if (d && v.buffered.length) bf.style.width = (v.buffered.end(v.buffered.length - 1) / d * 100) + '%'; };
     var jump = function (dt) { if (!v.duration) return; try { v.currentTime = Math.max(0, Math.min(v.duration - 0.05, v.currentTime + dt)); } catch (x) {} upd(); show(); };
     // міні-вікно: кадр береться з готового аркуша мініатюр (10 у ряд, по одному на секунду) — це лише зсув картинки, тому без затримки
     var spr = new Image(); spr.onload = function () { pvi.style.backgroundImage = 'url("' + spr.src + '")'; w.classList.remove('nopv'); }; spr.src = src.replace(/\.mp4(\?.*)?$/, '.jpg$1');
-    var seek = function (e) { var r = sk.getBoundingClientRect(), x = Math.max(0, Math.min(1, w.classList.contains('rot') ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width)), d = v.duration || 0; if (!d) return;
-      want = x * d; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(want); pvt.textContent = fmt(want);
-      var k = Math.max(0, Math.min(Math.floor(want), Math.ceil(d) - 1)); pvi.style.backgroundPosition = (-(k % 10) * 180) + 'px ' + (-Math.floor(k / 10) * 101.25) + 'px';
+    var seek = function (e, hov) { var r = sk.getBoundingClientRect(), x = Math.max(0, Math.min(1, w.classList.contains('rot') ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width)), d = v.duration || 0; if (!d) return;
+      var tw = x * d; if (!hov) { want = tw; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(tw); } pvt.textContent = fmt(tw);
+      var k = Math.max(0, Math.min(Math.floor(tw), Math.ceil(d) - 1)); pvi.style.backgroundPosition = (-(k % 10) * 180) + 'px ' + (-Math.floor(k / 10) * 101.25) + 'px';
       var W = w.clientWidth, pw = pvw.offsetWidth || 184, cx = sk.offsetLeft + x * sk.offsetWidth; pvw.style.left = Math.max(8, Math.min(W - pw - 8, cx - pw / 2)) + 'px'; };
     v.addEventListener('play', function () { w.classList.add('on'); big.innerHTML = PAUSE; show(); });
     v.addEventListener('pause', function () { w.classList.remove('on'); big.innerHTML = PLAY; show(); });
@@ -204,7 +217,9 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       last = now; if (w.classList.contains('idle') || v.paused) show(); else { clearTimeout(hid); w.classList.add('idle'); } });
     big.addEventListener('click', tog); q('.bk').addEventListener('click', function () { kick(this); jump(-10); }); q('.fw').addEventListener('click', function () { kick(this); jump(10); });
     sk.addEventListener('pointerdown', function (e) { drag = true; was = !v.paused; if (was) v.pause(); w.classList.add('drag'); try { sk.setPointerCapture(e.pointerId); } catch (x) {} seek(e); show(); });
-    sk.addEventListener('pointermove', function (e) { if (drag) seek(e); });
+    sk.addEventListener('pointermove', function (e) { if (drag) seek(e); else if (e.pointerType == 'mouse') { w.classList.add('hov'); seek(e, 1); } });      // миша над смугою часу — показати кадр
+    sk.addEventListener('pointerleave', function () { w.classList.remove('hov'); });
+    w.addEventListener('pointermove', function (e) { if (e.pointerType == 'mouse') show(); });      // на ПК кнопки з'являються від руху миші
     ['pointerup', 'pointercancel'].forEach(function (n) { sk.addEventListener(n, function () { if (!drag) return; drag = false; w.classList.remove('drag');
       if (want !== null) { try { v.currentTime = want; } catch (x) {} } want = null; if (was) tog(); show(); }); });
     sp.addEventListener('click', function () { ri = (ri + 1) % rates.length; v.playbackRate = rates[ri]; sp.firstChild.textContent = String(rates[ri]).replace('.', ',') + '×'; sp.classList.toggle('hot', rates[ri] !== 1); kick(sp); show(); });
@@ -241,7 +256,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 10:23', NEWS = 'Кнопка «Відкрити» знову працює: обрізана адреса більше не ламає панель.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 11:10', NEWS = 'Панель тепер є і програмою для ПК; у плеєрі — клавіші й кадр під мишею.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -252,7 +267,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   chk();
   function dec(h) { try { return JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return null; } }
   function render(d, how, soft) {
-    D = d; var o = ''; NV = {};
+    D = d; var o = '<div class="col">'; NV = {};      // дві колонки для широкого вікна (на телефоні колонки «розчиняються»)
     if (d.r) o += C('РЕНДЕР ЗАРАЗ') + '<div class="big"' + I() + '>' + N('r', Math.round(d.r.p * 100)) + ' %<em>' + E(d.r.n) + ' · ще ~' + E(d.r.l) + ' хв</em></div>' + bar(d.r.p, 'r', 1) + '</div>';
     else o += C('РЕНДЕР') + '<div class="note"' + I('margin:0') + '>Зараз нічого не рендериться.</div></div>';
     o += C('ЛІМІТИ');
@@ -264,11 +279,12 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     if (d.s && d.s.length) { var okc = d.s.filter(function (x) { return x[2] == 'ok'; }).length;
       o += C('СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length);
       d.s.forEach(function (x) { o += '<div class="p ' + E(x[2]) + '"' + I() + '><div class="n">' + E(x[0]) + '</div><div class="dot"></div><div class="t">' + E(x[1]) + '</div><div class="s">' + E(x[3]) + '</div>' + (x[2] == 'sent' && x[4] ? '<button class="mini" data-ok="' + E(x[4]) + '" data-t="' + E(x[1]) + '">✅</button><button class="mini alt" data-fx="' + E(x[4]) + '">✏️</button>' : '') + '</div>'; }); o += '</div>'; }
+    o += '</div><div class="col">';
     if (d.v && d.v.length) { o += C('ВІДЕО В ЧАТІ');
       d.v.forEach(function (x) { var pl = d.vb && x[2]; o += '<div class="v"' + I() + '><div class="t">' + E(x[1]) + '</div>' + (pl ? '<button data-p="' + E(d.vb + x[2]) + '">▶ Дивитись</button>' : '')
         + '<button class="' + (pl ? 'mini alt' : '') + '" data-m="' + E(x[0]) + '">' + (pl ? '💬' : 'Показати в чаті') + '</button></div>'; }); o += '</div>'; }
-    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ') + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>Позначки зберігаються в тебе в Telegram; директор їх не бачить.</div></div>';
-    if (IO) IO.disconnect(); app.innerHTML = o; PV = NV; ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
+    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ') + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>' + (LOC ? 'Позначки зберігаються в цій програмі на ПК, окремо від телефона; директор їх не бачить.' : 'Позначки зберігаються в тебе в Telegram; директор їх не бачить.') + '</div></div>';
+    if (IO) IO.disconnect(); app.innerHTML = o + '</div>'; PV = NV; ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
     var cs = app.querySelectorAll('.card'), vh = window.innerHeight || 800, i;      // картки нижче екрана чекають, доки до них докрутять; у «тихому» оновленні видимі картки не з'являються заново
     for (i = 0; i < cs.length; i++) { if (IO && cs[i].getBoundingClientRect().top > vh - 24) { cs[i].classList.add('wt'); IO.observe(cs[i]); } else { if (soft) cs[i].classList.add('st'); cnt(cs[i]); } }
   }
@@ -277,7 +293,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     // 16.11, 01:07 — читаємо «сирий» файл gist, а не api.github.com: в API без входу ліміт 60 запитів на годину з однієї адреси, а в мобільній мережі адреса
     // спільна на багатьох людей — автор одразу отримав «код 403». У сирого файла такого ліміту нема; параметр ?t= не дає віддати стару копію з пам'яті
     var own = /\.github\.io$/.test(location.hostname) ? location.hostname.split('.')[0] : 'Fenix48';
-    fetch('https://gist.githubusercontent.com/' + own + '/' + encodeURIComponent(G) + '/raw/data.json?t=' + Date.now(), {cache: 'no-store'})
+    fetch(LOC ? 'data.json?t=' + Date.now() : 'https://gist.githubusercontent.com/' + own + '/' + encodeURIComponent(G) + '/raw/data.json?t=' + Date.now(), {cache: 'no-store'})
       .then(function (r) { if (!r.ok) throw new Error('код ' + r.status); return r.text(); })
       .then(function (t) { return new Promise(function (ok) { setTimeout(function () { ok(t); }, Math.max(0, (soft ? 900 : 650) - (Date.now() - t0))); }); })      // щоб анімацію було видно й на швидкій мережі
       .then(function (t) { render(JSON.parse(t), 'оновлено щойно', soft); again(ft, 'fl'); again(pin, 'ok'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
@@ -304,17 +320,23 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   else nodata();
   app.addEventListener('click', function (e) { var el = e.target; if (!el || !el.getAttribute) return;
     var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
-    if (pv) { var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv;
+    if (pv) { if (el.blur) el.blur(); var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv;
       if (old) { killPlayer(); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls'); setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 300); }      // згортається плавно
       if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); el.parentNode.insertAdjacentElement('afterend', w); mkPlayer(w, pv);
         w.style.setProperty('--h', w.offsetHeight + 'px'); w.classList.add('opn'); setTimeout(function () { w.classList.remove('opn'); }, 480); }      // розгортається плавно
       return; }
-    var go = function (p) { var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=' + p; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else location.href = u; };
+    var go = function (p) { var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=' + p; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else if (LOC) location.href = 'tg://resolve?domain=' + ((D && D.b) || 'Video55_YouTube_bot') + '&start=' + p; else location.href = u; };
     var m = el.getAttribute('data-m'), ok = el.getAttribute('data-ok'), fx = el.getAttribute('data-fx');
     if (m) go('v' + m); else if (fx) go('fix' + fx);
     else if (ok) { var q = 'Схвалити «' + (el.getAttribute('data-t') || 'частину') + '»?'; if (tg && tg.showConfirm) tg.showConfirm(q, function (y) { if (y) go('ok' + ok); }); else if (confirm(q)) go('ok' + ok); } });
   app.addEventListener('change', function (e) { var i = e.target && e.target.getAttribute && e.target.getAttribute('data-c'); if (i === null || i === undefined) return;
     ck[+i] = e.target.checked; e.target.classList.toggle('tk', e.target.checked); var v = JSON.stringify(ck); try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } });
+  // програма для ПК: дані оновлюються самі (без миготіння; поки відкрито плеєр — ні, щоб не обірвати відео), а сторінка дає знати програмі, що вікно ще відкрите
+  if (LOC) { var sg = function (x) { var y = {}, k; for (k in x) if (k != 't') y[k] = x[k]; return JSON.stringify(y); };
+    setInterval(function () { if (document.hidden || rf.disabled || !D || document.getElementById('plr')) return;
+      fetch('data.json?t=' + Date.now(), {cache: 'no-store'}).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (!j || rf.disabled || document.getElementById('plr')) return;
+        if (sg(j) != sg(D)) render(j, 'оновлюється саме', 1); else { D = j; ft.textContent = 'дані на ' + (j.t || '') + ' · оновлюється саме'; } }).catch(function () {}); }, 15000);
+    var png = function () { fetch('ping?t=' + Date.now(), {cache: 'no-store'}).catch(function () {}); }; png(); setInterval(png, 5000); }
   // хвиля від дотику на кнопках панелі (не в плеєрі — там свої анімації)
   document.addEventListener('pointerdown', function (e) { var b = e.target && e.target.closest && e.target.closest('.v>button,.p>button,.rf'); if (!b || b.disabled) return;
     var r = b.getBoundingClientRect(), z = Math.max(r.width, r.height) * 2.3, s = document.createElement('span'); s.className = 'rp';
