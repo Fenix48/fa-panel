@@ -68,7 +68,9 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .pl.drag .tip{opacity:1} .pl.drag .sk b{transform:scale(1.35)}
 .pl .ld{position:absolute;left:0;right:0;top:50%;margin-top:44px;text-align:center;font-size:12.5px;color:#e9e6df;pointer-events:none}
 .pl:fullscreen{border-radius:0;display:flex;align-items:center;justify-content:center} .pl:fullscreen video{width:100%;height:100%;object-fit:contain}
-.ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px}
+.ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px} #fv{margin-top:4px;opacity:.7}
+.toast{position:fixed;left:12px;right:12px;top:10px;z-index:20;background:var(--gold);color:#111;border-radius:14px;padding:12px 14px;font-weight:700;font-size:13.5px;box-shadow:0 8px 30px rgba(0,0,0,.55);transform:translateY(-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.toast.on{transform:none} .toast small{display:block;font-weight:500;margin-top:3px;opacity:.86}
 </style>
 </head>
 <body>
@@ -77,6 +79,8 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 <div class="hd"><div class="pin">FA</div><div class="w"><small>FORSAKEN ATLAS</small><b>Панель серії</b></div><button id="rf" class="rf" style="display:none"><span class="ic">⟳</span>Оновити</button></div>
 <div id="app"><div class="card"><div class="note" style="margin:0">Завантажую дані…</div></div></div>
 <div class="ft" id="ft"></div>
+<div class="ft" id="fv"></div>
+<div class="toast" id="toast"></div>
 <script>
 (function(){
   if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {} }      // щоб панель можна було встановити як додаток
@@ -133,6 +137,16 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .then(function (b) { if (!w.isConnected) return; w.classList.remove('wait'); ld.textContent = ''; v.src = URL.createObjectURL(b); tog(); })
       .catch(function () { if (w.isConnected) { w.classList.remove('wait'); direct(); } });
   }
+  // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
+  var VER = '16.11 02:07', NEWS = 'Свій плеєр: перемотка працює всюди, кадр міняється, поки тягнеш повзунок. Панель тепер сама каже, коли оновилась.', toast = document.getElementById('toast'), tt = null;
+  function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
+    toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
+  try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
+  document.getElementById('fv').textContent = VER ? 'версія панелі ' + VER : '';
+  function chk() { if (!VER || !window.fetch) return; fetch('version.json?t=' + Date.now(), {cache: 'no-store'}).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    if (j && j.v && j.v != VER) say('⬆️ Вийшла нова версія панелі', 'Натисни тут — оновлю сторінку. Перевстановлювати нічого не треба.', true, function () {
+      var z = new URLSearchParams(location.search); z.set('r', Date.now()); location.replace(location.pathname + '?' + z.toString()); }); }).catch(function () {}); }
+  chk();
   function dec(h) { try { return JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return null; } }
   function render(d, how) {
     D = d; var o = '';
@@ -154,7 +168,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     app.innerHTML = o; ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
   }
   function refresh() {
-    if (!G) return; var t0 = Date.now(); rf.disabled = true; rf.classList.add('on'); app.classList.add('ld'); pg.classList.add('on');
+    chk(); if (!G) return; var t0 = Date.now(); rf.disabled = true; rf.classList.add('on'); app.classList.add('ld'); pg.classList.add('on');
     // 16.11, 01:07 — читаємо «сирий» файл gist, а не api.github.com: в API без входу ліміт 60 запитів на годину з однієї адреси, а в мобільній мережі адреса
     // спільна на багатьох людей — автор одразу отримав «код 403». У сирого файла такого ліміту нема; параметр ?t= не дає віддати стару копію з пам'яті
     var own = /\.github\.io$/.test(location.hostname) ? location.hostname.split('.')[0] : 'Fenix48';
