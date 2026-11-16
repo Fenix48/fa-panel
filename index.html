@@ -42,15 +42,15 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .rf .ic{display:inline-block;font-size:20px;line-height:1} .rf.on .ic{animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #app{transition:opacity .25s ease,transform .25s ease} #app.ld{opacity:.3;transform:scale(.98)}
-.card{animation:up .5s cubic-bezier(.2,.8,.2,1) both} .card:nth-child(2){animation-delay:.07s} .card:nth-child(3){animation-delay:.14s} .card:nth-child(4){animation-delay:.21s}
+.card{animation:up .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0s)} .card:nth-child(2){--d:.07s} .card:nth-child(3){--d:.14s} .card:nth-child(4){--d:.21s} .card:nth-child(5){--d:.28s} .card:nth-child(6){--d:.35s}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.bar i{animation:grow .8s cubic-bezier(.2,.8,.2,1) both} @keyframes grow{from{width:0}}
+.bar i{position:relative;overflow:hidden;animation:grow .9s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--d,0s) + .2s)} @keyframes grow{from{width:var(--f,0%)}}
 .pg{position:fixed;left:0;top:0;height:3px;width:100%;z-index:9;display:none;background:linear-gradient(90deg,transparent,var(--gold),transparent) no-repeat;background-size:45% 100%;animation:sweep .9s linear infinite} .pg.on{display:block}
 @keyframes sweep{from{background-position:-45% 0}to{background-position:145% 0}}
 /* 16.11, 00:36 — автор: «щоб свайпнути — теж оновлювалась сторінка»: потягни вниз від верху */
 .pt{position:fixed;left:50%;top:0;width:44px;height:44px;border-radius:50%;background:var(--card);border:1.5px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-size:21px;transform:translate(-50%,-52px);opacity:0;z-index:8;transition:opacity .15s} .pt.go{background:var(--gold);color:#111}
 .mini{padding:8px 10px;border-radius:10px;font-size:15px;background:#1f3a26;flex:none} .mini.alt{background:#2a2a30}
-.c{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)} .c:first-of-type{border-top:0} .c input{width:21px;height:21px;accent-color:var(--acc);flex:none;margin:0} .c input:checked+span{color:var(--dim);text-decoration:line-through}
+.c{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)} .c:first-of-type{border-top:0} .c input{width:21px;height:21px;accent-color:var(--acc);flex:none;margin:0} .c input:checked+span{color:var(--dim)}
 .pl{position:relative;margin:6px 0 14px;border-radius:14px;overflow:hidden;background:#000;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .pl .mv{width:100%;height:auto;aspect-ratio:16/10.4;max-height:60vh;object-fit:contain;display:block;background:#000}
 .pl .ctr{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);margin-top:2px;display:flex;align-items:center;justify-content:center;gap:24px;transition:opacity .2s}
@@ -94,13 +94,41 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px} #fv{margin-top:4px;opacity:.7}
 .toast{position:fixed;left:12px;right:12px;top:10px;z-index:20;background:var(--gold);color:#111;border-radius:14px;padding:12px 14px;font-weight:700;font-size:13.5px;box-shadow:0 8px 30px rgba(0,0,0,.55);transform:translateY(-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .toast.on{transform:none} .toast small{display:block;font-weight:500;margin-top:3px;opacity:.86}
+/* 16.11.2026 — автор: «загалом по сайту добав анімації» (qc/patch_miniapp_anim1_15.py) */
+.hd .pin{position:relative;animation:pin .7s cubic-bezier(.3,1.5,.5,1) backwards} .hd small{animation:trk .8s .12s cubic-bezier(.2,.8,.2,1) backwards} .hd b{display:block;animation:rin .55s .2s cubic-bezier(.2,.8,.2,1) backwards}
+.rf{animation:fr .5s .1s cubic-bezier(.2,.8,.2,1) backwards}
+.pin:after{content:"";position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;border:2px solid var(--gold);opacity:0;pointer-events:none}
+.hd .pin.ok{animation:pinok .6s cubic-bezier(.3,.7,.2,1)} .pin.ok:after{animation:ring .7s ease-out}
+@keyframes pin{from{opacity:0;transform:scale(.3) rotate(-50deg)}} @keyframes pinok{40%{transform:scale(1.16)}} @keyframes fr{from{opacity:0;transform:translateX(14px)}}
+@keyframes trk{from{opacity:0;letter-spacing:5.5px}} @keyframes rin{from{opacity:0;transform:translateX(-12px)}}
+.card h2{animation:trk .7s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--d,0s) + .08s)}
+.card .p,.card .v,.card .c,.card .row,.card .big,.card .note,.card .bar{animation:rin .45s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--d,0s) + .1s + var(--i,0)*32ms)}
+.p .dot{position:relative;animation:dot .45s cubic-bezier(.3,1.7,.5,1) backwards;animation-delay:calc(var(--d,0s) + .22s + var(--i,0)*32ms)} @keyframes dot{from{transform:scale(0)}}
+.sent .dot:after{content:"";position:absolute;left:-4px;top:-4px;right:-4px;bottom:-4px;border-radius:50%;border:1.5px solid var(--gold);animation:halo 1.9s ease-out infinite}
+@keyframes halo{0%{opacity:.85;transform:scale(.55)}75%,100%{opacity:0;transform:scale(1.55)}}
+.bar.live i:after{content:"";position:absolute;left:0;top:0;bottom:0;width:70px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:shine 1.7s ease-in-out infinite}
+@keyframes shine{from{transform:translateX(-70px)}to{transform:translateX(100vw)}}
+.cn{font-style:normal;font-variant-numeric:tabular-nums} .chg,.ft.fl{animation:chg 1.8s ease-out} @keyframes chg{0%,35%{color:var(--gold)}}
+.card.rv{--d:0s} .card.wt,.card.wt *,.card.wt *:after{animation-play-state:paused!important}
+.card.st,.card.st h2,.card.st .p,.card.st .v,.card.st .c,.card.st .row,.card.st .big,.card.st .note,.card.st .bar,.card.st .dot{animation:none}
+.v>button,.p>button,.rf{position:relative;overflow:hidden;transition:transform .14s cubic-bezier(.3,.7,.2,1),background .2s} .v>button:active,.p>button:active,.rf:active{transform:scale(.94)}
+.rp{position:absolute;border-radius:50%;background:rgba(255,255,255,.3);transform:scale(0);animation:rp .55s ease-out forwards;pointer-events:none} .rf .rp{background:rgba(214,166,62,.38)}
+@keyframes rp{to{transform:scale(1);opacity:0}}
+.c span{transition:color .3s} .c .tx{background:linear-gradient(currentColor,currentColor) no-repeat 0 58%/0 1.5px;transition:background-size .45s cubic-bezier(.2,.8,.2,1)}
+.c input:checked+span .tx{background-size:100% 1.5px} .c input.tk{animation:tick .4s cubic-bezier(.3,1.6,.5,1)} @keyframes tick{0%{transform:scale(.55)}60%{transform:scale(1.25)}}
+.pl.opn{animation:plin .42s cubic-bezier(.2,.8,.2,1)} .pl.cls{animation:plout .28s ease forwards;pointer-events:none}
+@keyframes plin{from{max-height:0;opacity:0;margin-top:0;margin-bottom:0}to{max-height:var(--h,60vh)}} @keyframes plout{from{max-height:var(--h,60vh)}to{max-height:0;opacity:0;margin-top:0;margin-bottom:0}}
+.pl.fsx{animation:fsin .3s ease} @keyframes fsin{from{opacity:0}}
+.sh{height:10px;border-radius:6px;margin:11px 0;background:linear-gradient(90deg,#1f1f23 20%,#35353b 50%,#1f1f23 80%);background-size:220% 100%;animation:shm 1.25s linear infinite}
+@keyframes shm{from{background-position:130% 0}to{background-position:-90% 0}}
+@media (prefers-reduced-motion:reduce){.sent .dot:after,.bar.live i:after{display:none} .sh{animation:none}}
 </style>
 </head>
 <body>
 <div class="pg" id="pg"></div>
 <div class="pt" id="pt">⟳</div>
 <div class="hd"><div class="pin">FA</div><div class="w"><small>FORSAKEN ATLAS</small><b>Панель серії</b></div><button id="rf" class="rf" style="display:none"><span class="ic">⟳</span>Оновити</button></div>
-<div id="app"><div class="card"><div class="note" style="margin:0">Завантажую дані…</div></div></div>
+<div id="app"><div class="card"><div class="sh" style="width:32%"></div><div class="sh" style="width:58%;height:24px"></div><div class="sh"></div><div class="note">Завантажую дані…</div></div><div class="card"><div class="sh" style="width:26%"></div><div class="sh" style="width:78%"></div><div class="sh"></div><div class="sh" style="width:66%"></div><div class="sh"></div></div></div>
 <div class="ft" id="ft"></div>
 <div class="ft" id="fv"></div>
 <div class="toast" id="toast"></div>
@@ -114,10 +142,22 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   try { if (G) localStorage.setItem('fa_g', G); else G = localStorage.getItem('fa_g') || ''; } catch (e) {}
   if (G && tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('g', G); } catch (e) {} }
   var E = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); };
-  var bar = function (f) { var p = Math.max(0, Math.min(100, Math.round(f * 100))); return '<div class="bar"><i class="' + (f >= .9 ? 'bad' : f >= .7 ? 'warn' : '') + '" style="width:' + p + '%"></i></div>'; };
+  // 16.11.2026 — анімації по всій панелі. PV — попередні значення: числа «доїжджають» від старого до нового, смужки ростуть від старої ширини;
+  // --i — номер рядка в картці (рядки з'являються каскадом). Числа в розмітці завжди справжні — анімація лише тимчасово підміняє текст
+  var PV = {}, NV = {}, ix = 0, pin = document.querySelector('.pin');
+  var I = function (s) { return ' style="--i:' + (ix++) + (s ? ';' + s : '') + '"'; }, C = function (h) { ix = 0; return '<div class="card"><h2>' + h + '</h2>'; };
+  var N = function (k, p) { var f = PV[k]; NV[k] = p; return '<i class="cn' + (f !== undefined && f != p ? ' chg' : '') + '" data-f="' + (f === undefined ? 0 : f) + '" data-n="' + p + '">' + p + '</i>'; };
+  var bar = function (f, k, live) { var p = Math.max(0, Math.min(100, Math.round(f * 100))), o = PV['b' + k]; NV['b' + k] = p;
+    return '<div class="bar' + (live ? ' live' : '') + '"' + I() + '><i class="' + (f >= .9 ? 'bad' : f >= .7 ? 'warn' : '') + '" style="width:' + p + '%' + (o !== undefined ? ';--f:' + o + '%' : '') + '"></i></div>'; };
+  var again = function (el, c) { if (!el) return; el.classList.remove(c); void el.offsetWidth; el.classList.add(c); };      // запустити анімацію елемента заново
+  function cnt(root) { var a = root.querySelectorAll('.cn'), i; if (!window.requestAnimationFrame) return;      // лічильники: від попереднього значення до нового
+    for (i = 0; i < a.length; i++) (function (el) { var f = +el.getAttribute('data-f'), n = +el.getAttribute('data-n'), t0 = 0; if (el._c || f == n || isNaN(f) || isNaN(n)) return; el._c = 1; el.textContent = f;
+      var st = function (t) { if (!t0) t0 = t; var x = Math.min(1, (t - t0) / 850), e = 1 - Math.pow(1 - x, 3); el.textContent = Math.round(f + (n - f) * e); if (x < 1) requestAnimationFrame(st); }; requestAnimationFrame(st); })(a[i]); }
+  var IO = window.IntersectionObserver ? new IntersectionObserver(function (es) { es.forEach(function (x) { if (!x.isIntersecting) return;      // картка нижче екрана з'являється, коли до неї докрутили
+    IO.unobserve(x.target); x.target.classList.add('rv'); x.target.classList.remove('wt'); cnt(x.target); }); }, {threshold: 0.06}) : null;
   var CHK = ['Схвалити всі десять частин', 'Переглянути зібраний епізод цілком', 'Обкладинки: запустити в YouTube тест A / B / D', 'Назва й опис — із файла директора', 'Розділи (таймкоди) в описі', 'Список авторів фото й відео в описі', 'Позначка YouTube «змінений вміст» — за переліком кадрів від директора'], ck = [];
   try { ck = JSON.parse(localStorage.getItem('fa_chk') || '[]') || []; } catch (e) { ck = []; }
-  if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v) { try { ck = JSON.parse(v) || ck; if (D) render(D, ''); } catch (e) {} } }); } catch (e) {} }
+  if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v) { try { ck = JSON.parse(v) || ck; if (D) render(D, '', 1); } catch (e) {} } }); } catch (e) {} }
   function fmt(x) { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ':' + ('0' + x % 60).slice(-2); }
   var SV = function (b, st) { return '<svg viewBox="0 0 24 24" width="1em" height="1em" ' + (st ? 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' : 'fill="currentColor"') + '>' + b + '</svg>'; };
   var PLAY = SV('<path d="M7.5 4.2v15.6L20.5 12z"/>'), PAUSE = SV('<path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/>');
@@ -198,7 +238,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 02:59', NEWS = 'Плеєр: анімація кнопки швидкості.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 03:21', NEWS = 'Анімації по всій панелі: рядки каскадом, лічильники, хвиля на кнопках, плавний плеєр.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -208,34 +248,36 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       var z = new URLSearchParams(location.search); z.set('r', Date.now()); location.replace(location.pathname + '?' + z.toString()); }); }).catch(function () {}); }
   chk();
   function dec(h) { try { return JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return null; } }
-  function render(d, how) {
-    D = d; var o = '';
-    if (d.r) o += '<div class="card"><h2>РЕНДЕР ЗАРАЗ</h2><div class="big">' + Math.round(d.r.p * 100) + ' %<em>' + E(d.r.n) + ' · ще ~' + E(d.r.l) + ' хв</em></div>' + bar(d.r.p) + '</div>';
-    else o += '<div class="card"><h2>РЕНДЕР</h2><div class="note" style="margin:0">Зараз нічого не рендериться.</div></div>';
-    o += '<div class="card"><h2>ЛІМІТИ</h2>';
-    (d.c || []).forEach(function (x) { o += '<div class="row"><b>Claude · ' + E(x[0]) + ' — ' + Math.round(x[1] * 100) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1]); });
-    if (!(d.c || []).length) o += '<div class="note" style="margin:0 0 6px">Ліміт Claude ще не знято — натисни «📊 Ліміти» під закріпленим табло в чаті.</div>';
-    if (d.g) o += '<div class="row"><b>Gemini · сьогодні</b><span>' + E(d.g) + '</span></div>';
-    (d.pc || []).forEach(function (x) { o += '<div class="row"><b>' + E(x[0]) + ' — ' + Math.round(x[1] * 100) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1]); });
-    o += '<div class="note">Гроші й залишок Gemini тут не видно — лише в Google AI Studio.</div></div>';
+  function render(d, how, soft) {
+    D = d; var o = ''; NV = {};
+    if (d.r) o += C('РЕНДЕР ЗАРАЗ') + '<div class="big"' + I() + '>' + N('r', Math.round(d.r.p * 100)) + ' %<em>' + E(d.r.n) + ' · ще ~' + E(d.r.l) + ' хв</em></div>' + bar(d.r.p, 'r', 1) + '</div>';
+    else o += C('РЕНДЕР') + '<div class="note"' + I('margin:0') + '>Зараз нічого не рендериться.</div></div>';
+    o += C('ЛІМІТИ');
+    (d.c || []).forEach(function (x) { o += '<div class="row"' + I() + '><b>Claude · ' + E(x[0]) + ' — ' + N('c' + x[0], Math.round(x[1] * 100)) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1], 'c' + x[0]); });
+    if (!(d.c || []).length) o += '<div class="note"' + I('margin:0 0 6px') + '>Ліміт Claude ще не знято — натисни «📊 Ліміти» під закріпленим табло в чаті.</div>';
+    if (d.g) o += '<div class="row"' + I() + '><b>Gemini · сьогодні</b><span>' + E(d.g) + '</span></div>';
+    (d.pc || []).forEach(function (x) { o += '<div class="row"' + I() + '><b>' + E(x[0]) + ' — ' + N('p' + x[0], Math.round(x[1] * 100)) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1], 'p' + x[0]); });
+    o += '<div class="note"' + I() + '>Гроші й залишок Gemini тут не видно — лише в Google AI Studio.</div></div>';
     if (d.s && d.s.length) { var okc = d.s.filter(function (x) { return x[2] == 'ok'; }).length;
-      o += '<div class="card"><h2>СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length + '</h2>';
-      d.s.forEach(function (x) { o += '<div class="p ' + E(x[2]) + '"><div class="n">' + E(x[0]) + '</div><div class="dot"></div><div class="t">' + E(x[1]) + '</div><div class="s">' + E(x[3]) + '</div>' + (x[2] == 'sent' && x[4] ? '<button class="mini" data-ok="' + E(x[4]) + '" data-t="' + E(x[1]) + '">✅</button><button class="mini alt" data-fx="' + E(x[4]) + '">✏️</button>' : '') + '</div>'; }); o += '</div>'; }
-    if (d.v && d.v.length) { o += '<div class="card"><h2>ВІДЕО В ЧАТІ</h2>';
-      d.v.forEach(function (x) { var pl = d.vb && x[2]; o += '<div class="v"><div class="t">' + E(x[1]) + '</div>' + (pl ? '<button data-p="' + E(d.vb + x[2]) + '">▶ Дивитись</button>' : '')
+      o += C('СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length);
+      d.s.forEach(function (x) { o += '<div class="p ' + E(x[2]) + '"' + I() + '><div class="n">' + E(x[0]) + '</div><div class="dot"></div><div class="t">' + E(x[1]) + '</div><div class="s">' + E(x[3]) + '</div>' + (x[2] == 'sent' && x[4] ? '<button class="mini" data-ok="' + E(x[4]) + '" data-t="' + E(x[1]) + '">✅</button><button class="mini alt" data-fx="' + E(x[4]) + '">✏️</button>' : '') + '</div>'; }); o += '</div>'; }
+    if (d.v && d.v.length) { o += C('ВІДЕО В ЧАТІ');
+      d.v.forEach(function (x) { var pl = d.vb && x[2]; o += '<div class="v"' + I() + '><div class="t">' + E(x[1]) + '</div>' + (pl ? '<button data-p="' + E(d.vb + x[2]) + '">▶ Дивитись</button>' : '')
         + '<button class="' + (pl ? 'mini alt' : '') + '" data-m="' + E(x[0]) + '">' + (pl ? '💬' : 'Показати в чаті') + '</button></div>'; }); o += '</div>'; }
-    o += '<div class="card"><h2>ПЕРЕД ПУБЛІКАЦІЄЮ</h2>' + CHK.map(function (t, i) { return '<label class="c"><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span>' + E(t) + '</span></label>'; }).join('') + '<div class="note">Позначки зберігаються в тебе в Telegram; директор їх не бачить.</div></div>';
-    app.innerHTML = o; ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
+    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ') + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>Позначки зберігаються в тебе в Telegram; директор їх не бачить.</div></div>';
+    if (IO) IO.disconnect(); app.innerHTML = o; PV = NV; ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
+    var cs = app.querySelectorAll('.card'), vh = window.innerHeight || 800, i;      // картки нижче екрана чекають, доки до них докрутять; у «тихому» оновленні видимі картки не з'являються заново
+    for (i = 0; i < cs.length; i++) { if (IO && cs[i].getBoundingClientRect().top > vh - 24) { cs[i].classList.add('wt'); IO.observe(cs[i]); } else { if (soft) cs[i].classList.add('st'); cnt(cs[i]); } }
   }
-  function refresh() {
-    chk(); if (!G) return; var t0 = Date.now(); rf.disabled = true; rf.classList.add('on'); app.classList.add('ld'); pg.classList.add('on');
+  function refresh(q) {                                                           // q === true — «тихе» оновлення при відкритті: без затемнення й без повторної появи видимих карток
+    chk(); if (!G) return; var t0 = Date.now(), soft = q === true && !!D; rf.disabled = true; rf.classList.add('on'); if (D && !soft) app.classList.add('ld'); pg.classList.add('on');
     // 16.11, 01:07 — читаємо «сирий» файл gist, а не api.github.com: в API без входу ліміт 60 запитів на годину з однієї адреси, а в мобільній мережі адреса
     // спільна на багатьох людей — автор одразу отримав «код 403». У сирого файла такого ліміту нема; параметр ?t= не дає віддати стару копію з пам'яті
     var own = /\.github\.io$/.test(location.hostname) ? location.hostname.split('.')[0] : 'Fenix48';
     fetch('https://gist.githubusercontent.com/' + own + '/' + encodeURIComponent(G) + '/raw/data.json?t=' + Date.now(), {cache: 'no-store'})
       .then(function (r) { if (!r.ok) throw new Error('код ' + r.status); return r.text(); })
-      .then(function (t) { return new Promise(function (ok) { setTimeout(function () { ok(t); }, Math.max(0, 650 - (Date.now() - t0))); }); })      // щоб анімацію було видно й на швидкій мережі
-      .then(function (t) { render(JSON.parse(t), 'оновлено щойно'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
+      .then(function (t) { return new Promise(function (ok) { setTimeout(function () { ok(t); }, Math.max(0, (soft ? 900 : 650) - (Date.now() - t0))); }); })      // щоб анімацію було видно й на швидкій мережі
+      .then(function (t) { render(JSON.parse(t), 'оновлено щойно', soft); again(ft, 'fl'); again(pin, 'ok'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
       .catch(function (e) { ft.textContent = e.message == 'код 404'
           ? 'Адреса панелі неповна: у ній має бути секретна частина ?g=… із 32 знаків, а прийшло ' + G.length + '. У @BotFather встав посилання повністю — скопіюй його з повідомлення директора.'
           : 'не вдалося оновити (' + e.message + '): нема мережі або забагато запитів — спробуй за хвилину';
@@ -251,7 +293,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   window.addEventListener('touchend', function () { if (y0 === null) return; var k = pull(); y0 = null; pt.style.transform = ''; pt.style.opacity = 0; pt.classList.remove('go'); if (k >= 62) refresh(); }, {passive: true});
   var h = P.get('d') || (location.hash.slice(1).split('&').filter(function (s) { return s && s.indexOf('=') < 0; })[0] || ''), d0 = h ? dec(h) : null;
   var nodata = function () { if (!D) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Немає даних. Один раз відкрий панель кнопкою «Панель» у чаті з ботом — після цього вона працюватиме й звідси.</div></div>'; };
-  var start = function () { rf.style.display = ''; refresh(); };
+  var start = function () { rf.style.display = ''; refresh(true); };
   rf.addEventListener('click', refresh);
   if (d0) render(d0, '');
   if (G) start();
@@ -259,15 +301,22 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   else nodata();
   app.addEventListener('click', function (e) { var el = e.target; if (!el || !el.getAttribute) return;
     var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
-    if (pv) { var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv; if (old) { killPlayer(); old.remove(); }
-      if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); el.parentNode.insertAdjacentElement('afterend', w); mkPlayer(w, pv); }
+    if (pv) { var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv;
+      if (old) { killPlayer(); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls'); setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 300); }      // згортається плавно
+      if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); el.parentNode.insertAdjacentElement('afterend', w); mkPlayer(w, pv);
+        w.style.setProperty('--h', w.offsetHeight + 'px'); w.classList.add('opn'); setTimeout(function () { w.classList.remove('opn'); }, 480); }      // розгортається плавно
       return; }
     var go = function (p) { var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=' + p; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else location.href = u; };
     var m = el.getAttribute('data-m'), ok = el.getAttribute('data-ok'), fx = el.getAttribute('data-fx');
     if (m) go('v' + m); else if (fx) go('fix' + fx);
     else if (ok) { var q = 'Схвалити «' + (el.getAttribute('data-t') || 'частину') + '»?'; if (tg && tg.showConfirm) tg.showConfirm(q, function (y) { if (y) go('ok' + ok); }); else if (confirm(q)) go('ok' + ok); } });
   app.addEventListener('change', function (e) { var i = e.target && e.target.getAttribute && e.target.getAttribute('data-c'); if (i === null || i === undefined) return;
-    ck[+i] = e.target.checked; var v = JSON.stringify(ck); try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } });
+    ck[+i] = e.target.checked; e.target.classList.toggle('tk', e.target.checked); var v = JSON.stringify(ck); try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } });
+  // хвиля від дотику на кнопках панелі (не в плеєрі — там свої анімації)
+  document.addEventListener('pointerdown', function (e) { var b = e.target && e.target.closest && e.target.closest('.v>button,.p>button,.rf'); if (!b || b.disabled) return;
+    var r = b.getBoundingClientRect(), z = Math.max(r.width, r.height) * 2.3, s = document.createElement('span'); s.className = 'rp';
+    s.style.cssText = 'width:' + z + 'px;height:' + z + 'px;left:' + (e.clientX - r.left - z / 2) + 'px;top:' + (e.clientY - r.top - z / 2) + 'px';
+    b.appendChild(s); setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 620); }, {passive: true});
 })();
 </script>
 </body>
