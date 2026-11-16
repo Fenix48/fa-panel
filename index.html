@@ -128,6 +128,13 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 @media (hover:hover){button,.c,.c input,.pl .sk{cursor:pointer} .v>button:hover,.p>button:hover{filter:brightness(1.14)} .rf:hover{background:rgba(214,166,62,.1)} .pl .pb:hover,.pl .side:hover{background:rgba(255,255,255,.16)} .pl .bigp:hover{background:#b65a39} .pl.on.idle{cursor:none} .card{transition:border-color .25s} .card:hover{border-color:#3a352a}
   html{scrollbar-color:#2e2e33 #0d0d0e} ::-webkit-scrollbar{width:10px} ::-webkit-scrollbar-thumb{background:#2e2e33;border-radius:6px} ::-webkit-scrollbar-track{background:#0d0d0e}}
 .pl.hov .pvw{opacity:1;transform:none}
+/* 16.11.2026 — хрестик на плеєрі; у програмі для ПК — позначка справжньої якості відео (qc/patch_panel_pc3_15.py) */
+.pl .xb{position:absolute;right:8px;top:8px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;font-size:22px;display:grid;place-items:center;padding:0;z-index:2;transition:opacity .25s,transform .15s,background .15s}
+.pl .xb:active{transform:scale(.88);background:rgba(255,255,255,.22)} .pl.idle .xb{opacity:0;pointer-events:none}
+.pl.fsx.rot .xb{right:calc(8px + var(--tg-safe-area-inset-bottom,0px))} .pl.fsx:not(.rot) .xb{top:calc(8px + var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));right:calc(8px + var(--tg-safe-area-inset-right,0px))}
+.pl .ld{left:50px;right:50px}
+.pl .qb{position:absolute;left:10px;top:12px;font:700 11px/1 inherit;letter-spacing:.6px;color:#111;background:var(--gold);padding:5px 7px;border-radius:6px;transition:opacity .25s;pointer-events:none} .pl .qb:empty{display:none} .pl.idle .qb{opacity:0}
+@media (hover:hover){.pl .xb:hover{background:rgba(255,255,255,.2)}}
 </style>
 </head>
 <body>
@@ -174,13 +181,16 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var T10 = '<text x="12" y="15.4" font-size="7" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" font-family="sans-serif">10</text>';
   var BK = SV('<path d="M3.6 12a8.4 8.4 0 1 0 2.5-6"/><path d="M3 3.4v4.6h4.6"/>' + T10, 1), FW = SV('<path d="M20.4 12a8.4 8.4 0 1 1-2.5-6"/><path d="M21 3.4v4.6h-4.6"/>' + T10, 1);
   var FSI = SV('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', 1), FSO = SV('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>', 1);
+  var XI = SV('<path d="M6 6l12 12M18 6L6 18"/>', 1);
   var CUR = null;                                                                  // відкритий плеєр: перед новим старий закривається й звільняє пам'ять
   function killPlayer() { var c = CUR; CUR = null; if (!c) return; try { if (c.ac) c.ac.abort(); } catch (e) {} try { c.v.pause(); c.v.removeAttribute('src'); c.v.load(); } catch (e) {}
     if (c.url) { try { URL.revokeObjectURL(c.url); } catch (e) {} } }
+  function shut(old) { killPlayer(); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls');      // закрити плеєр: згортається плавно
+    setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 300); }
   function mkPlayer(w, src) {                                                      // власний плеєр, версія 7
     killPlayer();
     w.className = 'pl nopv'; w.innerHTML = '<video class="mv" playsinline preload="auto"></video>'
-      + '<div class="ctr"><button class="side bk">' + BK + '</button><button class="bigp">' + PLAY + '</button><button class="side fw">' + FW + '</button></div><div class="ld"></div>'
+      + '<div class="ctr"><button class="side bk">' + BK + '</button><button class="bigp">' + PLAY + '</button><button class="side fw">' + FW + '</button></div><div class="ld"></div><div class="qb"></div><button class="xb">' + XI + '</button>'
       + '<div class="pvw"><i></i><span>0:00</span></div>'
       + '<div class="pc"><div class="r1"><button class="pb sp"><span>1×</span></button><span class="tm cur">0:00</span><div class="sk"><i class="bf"></i><i class="pr"></i><b></b></div><span class="tm dur">0:00</span>'
       + '<button class="pb fs">' + FSI + '</button></div></div>';
@@ -196,7 +206,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     var onkey = function (e) { if (CUR !== me) { document.removeEventListener('keydown', onkey); return; } if (e.ctrlKey || e.altKey || e.metaKey || /INPUT|TEXTAREA/.test((e.target && e.target.tagName) || '')) return;
       var k = e.key; if (k == ' ' || k == 'k' || k == 'K' || k == 'л' || k == 'Л') { e.preventDefault(); tog(); show(); } else if (k == 'ArrowLeft') { e.preventDefault(); kick(q('.bk')); jump(-10); }
       else if (k == 'ArrowRight') { e.preventDefault(); kick(q('.fw')); jump(10); } else if (k == 'f' || k == 'F' || k == 'а' || k == 'А') { e.preventDefault(); fs.click(); }
-      else if (k == 'Escape' && w.classList.contains('fsx')) pfs(false); };
+      else if (k == 'Escape') { if (w.classList.contains('fsx')) pfs(false); else if (!(document.fullscreenElement || document.webkitFullscreenElement)) q('.xb').click(); } };
     document.addEventListener('keydown', onkey);
     var upd = function () { if (drag) return; var d = v.duration || 0, x = d ? v.currentTime / d : 0; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(v.currentTime); dur.textContent = fmt(d);
       if (d && v.buffered.length) bf.style.width = (v.buffered.end(v.buffered.length - 1) / d * 100) + '%'; };
@@ -239,6 +249,11 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       var fail = function () { if (CUR === me && !(d.fullscreenElement || d.webkitFullscreenElement) && !w.classList.contains('fsx')) pfs(true); };
       try { var z = w.requestFullscreen ? w.requestFullscreen() : (w.webkitRequestFullscreen ? w.webkitRequestFullscreen() : null);
         if (z && z.then) { z.then(function () { try { screen.orientation.lock('landscape').catch(function () {}); } catch (x) {} }).catch(fail); setTimeout(fail, 1500); } else setTimeout(fail, 500); } catch (x) { fail(); } });
+    // хрестик: закрити плеєр (із повноекранного режиму — спершу вийти з нього)
+    q('.xb').addEventListener('click', function () { var d = document;
+      if (w.classList.contains('fsx')) pfs(false); else if (d.fullscreenElement || d.webkitFullscreenElement) { try { (d.exitFullscreen || d.webkitExitFullscreen).call(d); } catch (x) {} }
+      if (w.parentNode) shut(w); });
+    v.addEventListener('loadedmetadata', function () { if (LOC && v.videoHeight) q('.qb').textContent = v.videoHeight + 'p'; });      // програма для ПК: справжня якість відео, яке грає
     // завантаження: файл цілком у пам'ять (тоді перемотка працює всюди); не відкрився з пам'яті — напряму; не відкрився й так — пишемо код помилки
     var ready = function () { w.classList.remove('wait', 'load'); ld.textContent = ''; var pz = v.play(); if (pz && pz.catch) pz.catch(function () { show(); }); };
     var direct = function () { if (CUR !== me) return; me.mode = 'direct'; v.src = src; ready(); };
@@ -256,7 +271,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 11:17', NEWS = 'Програма для ПК показує відео в повній якості (1080p).', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 11:25', NEWS = 'Хрестик на плеєрі. У програмі для ПК — справжня повна якість і позначка «1080p».', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -321,7 +336,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   app.addEventListener('click', function (e) { var el = e.target; if (!el || !el.getAttribute) return;
     var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
     if (pv) { if (el.blur) el.blur(); var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv;
-      if (old) { killPlayer(); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls'); setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 300); }      // згортається плавно
+      if (old) shut(old);
       if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); el.parentNode.insertAdjacentElement('afterend', w); mkPlayer(w, pv);
         w.style.setProperty('--h', w.offsetHeight + 'px'); w.classList.add('opn'); setTimeout(function () { w.classList.remove('opn'); }, 480); }      // розгортається плавно
       return; }
