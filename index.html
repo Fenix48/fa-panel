@@ -199,7 +199,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .cps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .cps button{background:#24242a;color:var(--txt);border:1px solid #34343c;padding:12px 4px;border-radius:12px;font-size:13.5px;font-weight:700;transition:transform .1s,background .15s}
 .cps button:active{background:#30303a;transform:scale(.96)} .cps button.ok{border-color:var(--ok);color:var(--ok);background:rgba(126,196,138,.1)}
-.go{display:block;width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:800;margin:0 0 10px;background:linear-gradient(180deg,#b65a37,#963f22);box-shadow:0 6px 18px rgba(160,78,48,.35);transition:transform .1s} .go:active{transform:scale(.97)}
+.wgo{display:block;width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:800;margin:0 0 10px;background:linear-gradient(180deg,#b65a37,#963f22);box-shadow:0 6px 18px rgba(160,78,48,.35);transition:transform .1s} .wgo:active{transform:scale(.97)}
 .hero.done{text-align:center;padding:22px 16px 14px;border:1.5px solid var(--gold);background:radial-gradient(120% 90% at 50% 0,rgba(214,166,62,.34),rgba(22,22,24,.96) 62%)}
 .hero .tro{font-size:76px;line-height:1;display:inline-block;filter:drop-shadow(0 6px 24px rgba(214,166,62,.55));animation:tfl 3.2s ease-in-out infinite} @keyframes tfl{50%{transform:translateY(-6px) rotate(-3deg)}}
 .hero .h1{font-size:30px;font-weight:900;letter-spacing:.5px;line-height:1.05;margin:10px 0 6px;background:linear-gradient(90deg,#f6dc8c,#fff 50%,#f6dc8c);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fshine 3s linear infinite}
@@ -227,6 +227,9 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 #ps .opn2{display:block;width:100%;background:#24242a;border:1px solid #34343c;padding:13px;border-radius:12px;font-weight:700;font-size:14.5px;margin:0 0 10px}
 #ps .chp{margin:12px 0 0;padding:10px 12px;background:#1d1d21;border-radius:12px;font-size:12.5px;color:var(--dim);line-height:1.65;white-space:pre-line}
 #ps .nt{color:var(--dim);font-size:12.5px;margin:12px 0 0;text-align:center}
+/* 16.11 — playnav: кнопки «попередня / наступна» в плеєрі */
+.pl .ctr.nv{gap:14px} .pl .side.nv2{width:40px;height:40px;font-size:22px;background:rgba(0,0,0,.5)} .pl .side.nv2:disabled{opacity:.28}
+@media (max-width:380px){.pl .ctr.nv{gap:8px}}
 </style>
 </head>
 <body>
@@ -323,7 +326,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var unf = {};
   var heroUpd = function () { var h = document.getElementById('hero'); if (!h || !D) return; var d = finDone(), n = 0, i, N0 = curN(), p = pjOf(N0), sl = D.s || [];
     for (i = 0; i < CHK.length; i++) if (ck[i]) n++;
-    var W = canWatch(N0) ? '<button class="go" data-watch="' + N0 + '">▶ Дивитись серію' + (p && p[3] ? ' · ' + fmtD(p[3]) : '') + '</button>' : '';
+    var W = canWatch(N0) ? '<button class="wgo" data-watch="' + N0 + '">▶ Дивитись серію' + (p && p[3] ? ' · ' + fmtD(p[3]) : '') + '</button>' : '';
     var html = d
       ? '<div class="tro">🏆</div><div class="h1">ПРОЕКТ ЗАВЕРШЕНО</div><div class="when">' + E(String(D.ep || '').toUpperCase()) + (finTxt() ? ' · ' + E(finTxt().replace('✅ Проект завершено ', '')) : '') + '</div><div class="ttl">' + E(D.nm || '') + '</div>'
         + '<div class="sts"><div><b>' + (sl.length || '—') + '</b><span>ЧАСТИН</span></div><div><b>' + (p && p[3] ? fmtD(p[3]) : '—') + '</b><span>ХВИЛИН</span></div><div><b>' + (p && p[4] ? p[4] : '—') + '</b><span>МІСЦЬ</span></div><div><b>' + CHK.length + '/' + CHK.length + '</b><span>ПУНКТІВ</span></div></div>'
@@ -343,9 +346,19 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     if (!L.length) { say('Повне відео цієї серії — у програмі на ПК'); return; }
     var cap = document.createElement('div'), w = document.createElement('div'), k = 0; cap.className = 'plcap'; w.id = 'plr'; w.setAttribute('data-src', 'ep' + n); w._cap = cap;
     box.appendChild(cap); box.appendChild(w);
-    var go = function () { cap.textContent = L.length > 1 ? '▶ Частина ' + (k + 1) + ' з ' + L.length + ' · ' + L[k].name : '▶ ' + L[k].name; mkPlayer(w, L[k].src); var me = CUR;
-      if (me && me.v) me.v.addEventListener('ended', function () { if (CUR !== me) return; if (++k < L.length) go(); else cap.textContent = '✅ Серію переглянуто до кінця'; }); };
+    var swap = function () { var fx = w.classList.contains('fsx'), nf = document.fullscreenElement === w || document.webkitFullscreenElement === w;      // playnav
+      if (fx) { var a = w.querySelector('.fs'); if (a) a.click(); } go(); if (fx && !nf) { var b = w.querySelector('.fs'); if (b) b.click(); } };
+    var go = function () { cap.textContent = L.length > 1 ? '▶ Частина ' + (k + 1) + ' з ' + L.length + ' · ' + L[k].name : '▶ ' + L[k].name;
+      mkPlayer(w, L[k].src, L.length > 1 ? {prev: k > 0 ? function () { k--; swap(); } : null, next: k < L.length - 1 ? function () { k++; swap(); } : null} : null); var me = CUR;
+      if (me && me.v) me.v.addEventListener('ended', function () { if (CUR !== me) return; if (k < L.length - 1) { k++; swap(); } else cap.textContent = '✅ Серію переглянуто до кінця'; }); };
     go(); setTimeout(function () { try { cap.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch (x) {} }, 120); };
+  var navOf = function (el) { var all = [].filter.call(app.querySelectorAll('.p'), function (r) { var n = r.querySelector('.n'); return n && n.textContent && r.querySelector('[data-p]'); })      // playnav: лише частини серії
+      .map(function (r) { return r.querySelector('[data-p]'); }), i = all.indexOf(el);
+    if (i < 0 || all.length < 2) return null;
+    var hop = function (b) { var c = document.getElementById('plr'), fx = !!c && (c.classList.contains('fsx') || document.fullscreenElement === c || document.webkitFullscreenElement === c);
+      if (c && c.classList.contains('fsx')) { var a = c.querySelector('.fs'); if (a) a.click(); }
+      b.click(); var n = document.getElementById('plr'); if (!n) return; if (fx) { var f = n.querySelector('.fs'); if (f) f.click(); } else { try { n.scrollIntoView({behavior: 'smooth', block: 'center'}); } catch (x) {} } };
+    return {prev: i > 0 ? function () { hop(all[i - 1]); } : null, next: i < all.length - 1 ? function () { hop(all[i + 1]); } : null}; };
   var ps = null;
   var psClose = function () { if (!ps) return; var o = ps.querySelector('#plr'); if (o) shut(o); ps.classList.remove('on'); };
   var openPs = function (n) { var p = pjOf(n); if (!p) return;
@@ -361,7 +374,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     ps.setAttribute('data-n', n);
     ps.innerHTML = '<div class="sh2"><div class="grab"></div><div class="top"><div class="num">' + n + '</div><div><small>ЗАБРОШКИ ' + n + ' · ' + st + '</small><b>' + E(p[1] || 'Назви в описі нема') + '</b></div><button class="x">' + XI + '</button></div>'
       + '<div class="sts"><div><b>' + (p[3] ? fmtD(p[3]) : '—') + '</b><span>ТРИВАЛІСТЬ</span></div><div><b>' + (p[4] || '—') + '</b><span>МІСЦЬ</span></div><div><b>' + E(String(p[5] || '—').slice(0, 5)) + '</b><span>ЗІБРАНО</span></div></div>'
-      + (canWatch(n) ? '<button class="go" data-watch="' + n + '">▶ Дивитись серію</button>' : '')
+      + (canWatch(n) ? '<button class="wgo" data-watch="' + n + '">▶ Дивитись серію</button>' : '')
       + (LOC ? '<button class="opn2" data-open="1">📂 Відкрити теку МОЄ</button>' : '')
       + CPS(p) + (chp ? '<div class="chp">' + E(chp) + '</div>' : '')
       + (!LOC && !canWatch(n) ? '<div class="nt">Повне відео цієї серії відкривається в програмі на ПК.</div>' : '')
@@ -409,15 +422,16 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var BK = SV('<path d="M3.6 12a8.4 8.4 0 1 0 2.5-6"/><path d="M3 3.4v4.6h4.6"/>' + T10, 1), FW = SV('<path d="M20.4 12a8.4 8.4 0 1 1-2.5-6"/><path d="M21 3.4v4.6h-4.6"/>' + T10, 1);
   var FSI = SV('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', 1), FSO = SV('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>', 1);
   var XI = SV('<path d="M6 6l12 12M18 6L6 18"/>', 1);
+  var PRV = SV('<path d="M6 5.5h2.2v13H6zM19 5.5v13L9.2 12z"/>'), NXT = SV('<path d="M15.8 5.5H18v13h-2.2zM5 5.5v13L14.8 12z"/>');      // playnav
   var CUR = null;                                                                  // відкритий плеєр: перед новим старий закривається й звільняє пам'ять
   function killPlayer() { var c = CUR; CUR = null; if (!c) return; try { if (c.ac) c.ac.abort(); } catch (e) {} try { c.v.pause(); c.v.removeAttribute('src'); c.v.load(); } catch (e) {}
     if (c.url) { try { URL.revokeObjectURL(c.url); } catch (e) {} } }
   function shut(old) { killPlayer(); if (old._cap && old._cap.parentNode) old._cap.parentNode.removeChild(old._cap); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls');      // закрити плеєр: згортається плавно
     setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 300); }
-  function mkPlayer(w, src) {                                                      // власний плеєр, версія 7
+  function mkPlayer(w, src, nav) {                                                      // власний плеєр, версія 7
     killPlayer();
     w.className = 'pl nopv'; w.innerHTML = '<video class="mv" playsinline preload="auto"></video>'
-      + '<div class="ctr"><button class="side bk">' + BK + '</button><button class="bigp">' + PLAY + '</button><button class="side fw">' + FW + '</button></div><div class="ld"></div><div class="qb"></div><button class="xb">' + XI + '</button>'
+      + '<div class="ctr' + (nav ? ' nv' : '') + '">' + (nav ? '<button class="side nv2 pvb"' + (nav.prev ? '' : ' disabled') + ' aria-label="Попередня">' + PRV + '</button>' : '') + '<button class="side bk">' + BK + '</button><button class="bigp">' + PLAY + '</button><button class="side fw">' + FW + '</button>' + (nav ? '<button class="side nv2 nxb"' + (nav.next ? '' : ' disabled') + ' aria-label="Наступна">' + NXT + '</button>' : '') + '</div><div class="ld"></div><div class="qb"></div><button class="xb">' + XI + '</button>'
       + '<div class="pvw"><i></i><span>0:00</span></div>'
       + '<div class="pc"><div class="r1"><button class="pb sp"><span>1×</span></button><span class="tm cur">0:00</span><div class="sk"><i class="bf"></i><i class="pr"></i><b></b></div><span class="tm dur">0:00</span>'
       + '<button class="pb fs">' + FSI + '</button></div></div>';
@@ -432,7 +446,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     // клавіатура (ПК): пробіл / K — грати-пауза, ← → — 10 с, F — на весь екран, Esc — вийти з власного повноекранного режиму
     var onkey = function (e) { if (CUR !== me) { document.removeEventListener('keydown', onkey); return; } if (e.ctrlKey || e.altKey || e.metaKey || /INPUT|TEXTAREA/.test((e.target && e.target.tagName) || '')) return;
       var k = e.key; if (k == ' ' || k == 'k' || k == 'K' || k == 'л' || k == 'Л') { e.preventDefault(); tog(); show(); } else if (k == 'ArrowLeft') { e.preventDefault(); kick(q('.bk')); jump(-10); }
-      else if (k == 'ArrowRight') { e.preventDefault(); kick(q('.fw')); jump(10); } else if (k == 'f' || k == 'F' || k == 'а' || k == 'А') { e.preventDefault(); fs.click(); }
+      else if (k == 'ArrowRight') { e.preventDefault(); kick(q('.fw')); jump(10); } else if (k == 'f' || k == 'F' || k == 'а' || k == 'А') { e.preventDefault(); fs.click(); } else if (nav && /^[nNтТ]$/.test(k)) { e.preventDefault(); if (nav.next) nav.next(); } else if (nav && /^[pPзЗ]$/.test(k)) { e.preventDefault(); if (nav.prev) nav.prev(); }
       else if (k == 'Escape') { if (w.classList.contains('fsx')) pfs(false); else if (!(document.fullscreenElement || document.webkitFullscreenElement)) q('.xb').click(); } };
     document.addEventListener('keydown', onkey);
     var upd = function () { if (drag) return; var d = v.duration || 0, x = d ? v.currentTime / d : 0; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(v.currentTime); dur.textContent = fmt(d);
@@ -452,7 +466,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     v.addEventListener('click', function (e) { var now = Date.now(), r = v.getBoundingClientRect(), x = w.classList.contains('rot') ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width;
       if (now - last < 330 && (x < .35 || x > .65)) { jump(x < .5 ? -10 : 10); last = 0; return; }      // подвійний дотик збоку: ∓10 с
       last = now; if (w.classList.contains('idle') || v.paused) show(); else { clearTimeout(hid); w.classList.add('idle'); } });
-    big.addEventListener('click', tog); q('.bk').addEventListener('click', function () { kick(this); jump(-10); }); q('.fw').addEventListener('click', function () { kick(this); jump(10); });
+    big.addEventListener('click', tog); if (nav) { if (nav.prev) q('.pvb').addEventListener('click', function (e) { e.stopPropagation(); nav.prev(); }); if (nav.next) q('.nxb').addEventListener('click', function (e) { e.stopPropagation(); nav.next(); }); } q('.bk').addEventListener('click', function () { kick(this); jump(-10); }); q('.fw').addEventListener('click', function () { kick(this); jump(10); });
     sk.addEventListener('pointerdown', function (e) { drag = true; was = !v.paused; if (was) v.pause(); w.classList.add('drag'); try { sk.setPointerCapture(e.pointerId); } catch (x) {} seek(e); show(); });
     sk.addEventListener('pointermove', function (e) { if (drag) seek(e); else if (e.pointerType == 'mouse') { w.classList.add('hov'); seek(e, 1); } });      // миша над смугою часу — показати кадр
     sk.addEventListener('pointerleave', function () { w.classList.remove('hov'); });
@@ -498,7 +512,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 14:13', NEWS = 'Справжні кнопки: «Дивитись серію», «Назва / Опис / Теги» копіюються для YouTube; після завершення — картка-трофей; у меню — картка кожного проекту', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 14:22', NEWS = 'У плеєрі — ⏮ попередня і ⏭ наступна частина; виправлено: після «прискорення» кнопка більше не вилазить і перемотка працює', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = '<button class="tq">' + XI + '</button>' + E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);      // хрестик прибирає плашку без дії
     toast.onclick = function (e) { toast.classList.remove('on'); if (fn && !(e && e.target && e.target.closest && e.target.closest('.tq'))) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -572,7 +586,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
     if (pv) { if (el.blur) el.blur(); var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv;
       if (old) shut(old);
-      if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); el.parentNode.insertAdjacentElement('afterend', w); mkPlayer(w, pv);
+      if (!same) { var w = document.createElement('div'); w.id = 'plr'; w.setAttribute('data-src', pv); el.parentNode.insertAdjacentElement('afterend', w); mkPlayer(w, pv, navOf(el));
         w.style.setProperty('--h', w.offsetHeight + 'px'); w.classList.add('opn'); setTimeout(function () { w.classList.remove('opn'); }, 480); }      // розгортається плавно
       return; }
     var go = function (p) { var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=' + p; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else if (LOC) location.href = 'tg://resolve?domain=' + ((D && D.b) || 'Video55_YouTube_bot') + '&start=' + p; else location.href = u; };
