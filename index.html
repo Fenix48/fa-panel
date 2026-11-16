@@ -53,7 +53,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .c{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)} .c:first-of-type{border-top:0} .c input{width:21px;height:21px;accent-color:var(--acc);flex:none;margin:0} .c input:checked+span{color:var(--dim);text-decoration:line-through}
 .pl{position:relative;margin:6px 0 14px;border-radius:14px;overflow:hidden;background:#000;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .pl .mv{width:100%;height:auto;aspect-ratio:16/10.4;max-height:60vh;object-fit:contain;display:block;background:#000}
-.pl .ctr{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);margin-top:-30px;display:flex;align-items:center;justify-content:center;gap:24px;transition:opacity .2s}
+.pl .ctr{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);margin-top:-4px;display:flex;align-items:center;justify-content:center;gap:24px;transition:opacity .2s}
 .pl.idle .ctr,.pl.wait .ctr{opacity:0;pointer-events:none}
 .pl .bigp{width:66px;height:66px;border-radius:50%;background:rgba(160,78,48,.95);color:#fff;font-size:40px;display:grid;place-items:center;padding:0;box-shadow:0 5px 20px rgba(0,0,0,.5)} .pl .bigp:active{background:#8a4228}
 .pl .side{width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:31px;display:grid;place-items:center;padding:0} .pl .side:active{background:rgba(255,255,255,.2)}
@@ -129,7 +129,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       if (d && v.buffered.length) bf.style.width = (v.buffered.end(v.buffered.length - 1) / d * 100) + '%'; };
     var jump = function (dt) { if (!v.duration) return; try { v.currentTime = Math.max(0, Math.min(v.duration - 0.05, v.currentTime + dt)); } catch (x) {} upd(); show(); };
     // міні-вікно: кадр береться з готового аркуша мініатюр (10 у ряд, по одному на секунду) — це лише зсув картинки, тому без затримки
-    var spr = new Image(); spr.onload = function () { pvi.style.backgroundImage = 'url("' + spr.src + '")'; w.classList.remove('nopv'); }; spr.src = src.replace(/\.mp4$/, '.jpg');
+    var spr = new Image(); spr.onload = function () { pvi.style.backgroundImage = 'url("' + spr.src + '")'; w.classList.remove('nopv'); }; spr.src = src.replace(/\.mp4(\?.*)?$/, '.jpg$1');
     var seek = function (e) { var r = sk.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), d = v.duration || 0; if (!d) return;
       want = x * d; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(want); pvt.textContent = fmt(want);
       var k = Math.max(0, Math.min(Math.floor(want), Math.ceil(d) - 1)); pvi.style.backgroundPosition = (-(k % 10) * 180) + 'px ' + (-Math.floor(k / 10) * 101.25) + 'px';
@@ -169,7 +169,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 02:37', NEWS = 'Плеєр: якщо відео не відкрилось, тепер пише, на якому кроці й чому.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 02:41', NEWS = 'Відео мають відкриватись: адреса оновлюється після кожного викладання. Кнопки «грати» й перемотки опущено.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
