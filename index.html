@@ -83,8 +83,10 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .pl.wait:after{content:"";position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-46px 0 0 -20px;border:3px solid rgba(255,255,255,.22);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;pointer-events:none}
 .pl:fullscreen{margin:0;border-radius:0;display:flex;align-items:center;justify-content:center} .pl:fullscreen .mv{width:100%;height:100%;max-height:none;aspect-ratio:auto}
 .pl:fullscreen .ctr,.pl.fsx .ctr{gap:40px;margin-top:6px} .pl:fullscreen .bigp,.pl.fsx .bigp{width:82px;height:82px;font-size:50px} .pl:fullscreen .side,.pl.fsx .side{width:58px;height:58px;font-size:38px}
-.pl.fsx{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:60;margin:0;border-radius:0;display:flex;align-items:center;justify-content:center}
-.pl.fsx.rot{width:100vh;height:100vw;transform:rotate(90deg);transform-origin:0 0;left:100vw}
+.pl.fsx{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;z-index:60;margin:0;border-radius:0;display:flex;align-items:center;justify-content:center}
+.pl.fsx.rot{width:100vh;width:100dvh;height:100vw;transform:rotate(90deg);transform-origin:0 0;left:100vw}
+.pl.fsx.rot .pc{padding-left:calc(4px + var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));padding-right:calc(4px + var(--tg-safe-area-inset-bottom,0px))}
+.pl.fsx:not(.rot) .pc{padding-left:calc(4px + var(--tg-safe-area-inset-left,0px));padding-right:calc(4px + var(--tg-safe-area-inset-right,0px));padding-bottom:calc(4px + var(--tg-safe-area-inset-bottom,0px))}
 .pl.fsx .mv{width:100%;height:100%;max-height:none;aspect-ratio:auto}
 .ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px} #fv{margin-top:4px;opacity:.7}
 .toast{position:fixed;left:12px;right:12px;top:10px;z-index:20;background:var(--gold);color:#111;border-radius:14px;padding:12px 14px;font-weight:700;font-size:13.5px;box-shadow:0 8px 30px rgba(0,0,0,.55);transform:translateY(-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
@@ -161,18 +163,21 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       if (want !== null) { try { v.currentTime = want; } catch (x) {} } want = null; if (was) tog(); show(); }); });
     sp.addEventListener('click', function () { ri = (ri + 1) % rates.length; v.playbackRate = rates[ri]; sp.textContent = String(rates[ri]).replace('.', ',') + '×'; show(); });
     // «на весь екран»: спершу штатний режим браузера; відмовив або мовчить — власний (плеєр сам розтягується на екран, у вертикальному положенні — з поворотом)
-    var ph = null, pfs = function (on) { var play = !v.paused;
-      if (on) { ph = document.createComment('pl'); w.parentNode.insertBefore(ph, w); document.body.appendChild(w); }
-      else if (ph && ph.parentNode) { ph.parentNode.insertBefore(w, ph); ph.parentNode.removeChild(ph); ph = null; } else if (!on && ph) { killPlayer(); w.remove(); return; }
+    var ph = null, tgf = false, bkx = function () { pfs(false); }, onrz = function () { if (w.classList.contains('fsx')) w.classList.toggle('rot', window.innerHeight > window.innerWidth); };
+    var pfs = function (on) { var play = !v.paused, gone = false;
+      if (on) { ph = document.createComment('pl'); w.parentNode.insertBefore(ph, w); document.body.appendChild(w); window.addEventListener('resize', onrz); }
+      else { window.removeEventListener('resize', onrz); if (ph && ph.parentNode) { ph.parentNode.insertBefore(w, ph); ph.parentNode.removeChild(ph); } else gone = true; ph = null; }
       w.classList.toggle('fsx', on); w.classList.toggle('rot', on && window.innerHeight > window.innerWidth); fs.innerHTML = on ? FSO : FSI; document.documentElement.style.overflow = on ? 'hidden' : '';
-      if (tg) { try { if (on) { if (tg.requestFullscreen) tg.requestFullscreen(); } else if (tg.exitFullscreen) tg.exitFullscreen(); } catch (x) {} }
+      if (tg) { try { if (on) { tgf = !tg.isFullscreen && !!tg.requestFullscreen; if (tgf) tg.requestFullscreen(); } else if (tgf) { tgf = false; if (tg.exitFullscreen) tg.exitFullscreen(); } } catch (x) { tgf = false; }
+        try { if (tg.BackButton) { if (on) { tg.BackButton.onClick(bkx); tg.BackButton.show(); } else { tg.BackButton.offClick(bkx); tg.BackButton.hide(); } } } catch (x) {} }
+      if (gone) { killPlayer(); w.remove(); return; }                                 // список за цей час перемалювали — плеєру нема куди вертатись
       if (play) { var pz = v.play(); if (pz && pz.catch) pz.catch(function () {}); } show(); };
     fs.addEventListener('click', function () { var d = document; kick(fs); show();
       if (w.classList.contains('fsx')) { pfs(false); return; }
       if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
       var fail = function () { if (CUR === me && !(d.fullscreenElement || d.webkitFullscreenElement) && !w.classList.contains('fsx')) pfs(true); };
       try { var z = w.requestFullscreen ? w.requestFullscreen() : (w.webkitRequestFullscreen ? w.webkitRequestFullscreen() : null);
-        if (z && z.then) { z.then(function () { try { screen.orientation.lock('landscape').catch(function () {}); } catch (x) {} }).catch(fail); setTimeout(fail, 700); } else setTimeout(fail, 350); } catch (x) { fail(); } });
+        if (z && z.then) { z.then(function () { try { screen.orientation.lock('landscape').catch(function () {}); } catch (x) {} }).catch(fail); setTimeout(fail, 1500); } else setTimeout(fail, 500); } catch (x) { fail(); } });
     // завантаження: файл цілком у пам'ять (тоді перемотка працює всюди); не відкрився з пам'яті — напряму; не відкрився й так — пишемо код помилки
     var ready = function () { w.classList.remove('wait', 'load'); ld.textContent = ''; var pz = v.play(); if (pz && pz.catch) pz.catch(function () { show(); }); };
     var direct = function () { if (CUR !== me) return; me.mode = 'direct'; v.src = src; ready(); };
@@ -190,7 +195,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 02:50', NEWS = 'Плеєр: повзунок унизу, швидкість і «на весь екран» поруч із ним; повноекранний режим надійніший.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 02:57', NEWS = 'Плеєр: повзунок унизу, швидкість і «на весь екран» поруч із ним. Повноекранний режим має запасний варіант; свайп по відео більше не оновлює сторінку.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -237,7 +242,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   // потягни вниз — оновити. Telegram сам закриває мініпрограму свайпом униз, тому цей його жест вимикаємо (закрити можна хрестиком)
   if (tg && tg.disableVerticalSwipes) { try { tg.disableVerticalSwipes(); } catch (e) {} }
   var pt = document.getElementById('pt'), y0 = null, dy = 0, pull = function () { return Math.max(0, Math.min(dy * .5, 92)); };
-  window.addEventListener('touchstart', function (e) { if (G && window.scrollY <= 0 && !rf.disabled) { y0 = e.touches[0].clientY; dy = 0; } else y0 = null; }, {passive: true});
+  window.addEventListener('touchstart', function (e) { if (G && window.scrollY <= 0 && !rf.disabled && !(e.target && e.target.closest && e.target.closest('.pl'))) { y0 = e.touches[0].clientY; dy = 0; } else y0 = null; }, {passive: true});
   window.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = e.touches[0].clientY - y0; if (window.scrollY > 0) { dy = 0; }
     var k = pull(); pt.style.transform = 'translate(-50%,' + (k - 52) + 'px) rotate(' + (k * 4) + 'deg)'; pt.style.opacity = Math.min(1, k / 55); pt.classList.toggle('go', k >= 62); }, {passive: true});
   window.addEventListener('touchend', function () { if (y0 === null) return; var k = pull(); y0 = null; pt.style.transform = ''; pt.style.opacity = 0; pt.classList.remove('go'); if (k >= 62) refresh(); }, {passive: true});
