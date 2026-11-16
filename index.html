@@ -188,6 +188,10 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var CHK = ['Схвалити всі десять частин', 'Переглянути зібраний епізод цілком', 'Обкладинки: запустити в YouTube тест A / B / D', 'Назва й опис — із файла директора', 'Розділи (таймкоди) в описі', 'Список авторів фото й відео в описі', 'Позначка YouTube «змінений вміст» — за переліком кадрів від директора'], ck = [];
   try { ck = JSON.parse(localStorage.getItem('fa_chk') || '[]') || []; } catch (e) { ck = []; }
   if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v) { try { ck = JSON.parse(v) || ck; if (D) render(D, '', 1); } catch (e) {} } }); } catch (e) {} }
+  // програма для ПК: позначки — у файлі на ПК (не зітре ні браузер, ні перезапуск програми); файла ще нема — переносимо туди позначки з пам'яті браузера
+  var putChk = function (v) { if (LOC && window.fetch) fetch('chk', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: v}).catch(function () {}); };
+  if (LOC && window.fetch) fetch('chk.json?t=' + Date.now(), {cache: 'no-store'}).then(function (r) { if (r.status == 404) { if (ck.some(function (x) { return x; })) putChk(JSON.stringify(ck)); return null; } return r.ok ? r.json() : null; })
+    .then(function (j) { if (Array.isArray(j)) { ck = j; try { localStorage.setItem('fa_chk', JSON.stringify(ck)); } catch (e) {} if (D) render(D, '', 1); } }).catch(function () {});
   function fmt(x) { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ':' + ('0' + x % 60).slice(-2); }
   var SV = function (b, st) { return '<svg viewBox="0 0 24 24" width="1em" height="1em" ' + (st ? 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' : 'fill="currentColor"') + '>' + b + '</svg>'; };
   var PLAY = SV('<path d="M7.5 4.2v15.6L20.5 12z"/>'), PAUSE = SV('<path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/>');
@@ -284,7 +288,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 11:41', NEWS = 'Серія і відео — тепер одна картка: у рядку частини її стан і кнопка «Дивитись».', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 11:45', NEWS = 'Програма для ПК: позначки чекліста зберігаються у файлі на ПК.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = '<button class="tq">' + XI + '</button>' + E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);      // хрестик прибирає плашку без дії
     toast.onclick = function (e) { toast.classList.remove('on'); if (fn && !(e && e.target && e.target.closest && e.target.closest('.tq'))) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -304,7 +308,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     if (d.g) o += '<div class="row"' + I() + '><b>Gemini · сьогодні</b><span>' + E(d.g) + '</span></div>';
     (d.pc || []).forEach(function (x) { o += '<div class="row"' + I() + '><b>' + E(x[0]) + ' — ' + N('p' + x[0], Math.round(x[1] * 100)) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1], 'p' + x[0]); });
     o += '<div class="note"' + I() + '>Гроші й залишок Gemini тут не видно — лише в Google AI Studio.</div></div>';
-    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ', 'k-c') + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>' + (LOC ? 'Позначки зберігаються в цій програмі на ПК, окремо від телефона; директор їх не бачить.' : 'Позначки зберігаються в тебе в Telegram; директор їх не бачить.') + '</div></div>';
+    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ', 'k-c') + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>' + (LOC ? 'Позначки зберігаються у файлі на цьому ПК, окремо від телефона.' : 'Позначки зберігаються в тебе в Telegram; директор їх не бачить.') + '</div></div>';
     o += '</div><div class="col">';
     // одна картка замість двох («Серія» + «Відео в чаті»; автор, 16.11: «два вікна лишні, можна одне»): у рядку частини — її стан і кнопки найновішого відео
     var vm = {}, used = {}; (d.v || []).forEach(function (x) { vm[x[0]] = x; });
@@ -365,7 +369,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     if (m) go('v' + m); else if (fx) go('fix' + fx);
     else if (ok) { var q = 'Схвалити «' + (el.getAttribute('data-t') || 'частину') + '»?'; if (tg && tg.showConfirm) tg.showConfirm(q, function (y) { if (y) go('ok' + ok); }); else if (confirm(q)) go('ok' + ok); } });
   app.addEventListener('change', function (e) { var i = e.target && e.target.getAttribute && e.target.getAttribute('data-c'); if (i === null || i === undefined) return;
-    ck[+i] = e.target.checked; e.target.classList.toggle('tk', e.target.checked); var v = JSON.stringify(ck); try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } });
+    ck[+i] = e.target.checked; e.target.classList.toggle('tk', e.target.checked); var v = JSON.stringify(ck); try { localStorage.setItem('fa_chk', v); } catch (x) {} putChk(v); if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } });
   // програма для ПК: дані оновлюються самі (без миготіння; поки відкрито плеєр — ні, щоб не обірвати відео), а сторінка дає знати програмі, що вікно ще відкрите
   if (LOC) { var sg = function (x) { var y = {}, k; for (k in x) if (k != 't') y[k] = x[k]; return JSON.stringify(y); };
     setInterval(function () { if (document.hidden || rf.disabled || !D || document.getElementById('plr')) return;
