@@ -51,28 +51,31 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .pt{position:fixed;left:50%;top:0;width:44px;height:44px;border-radius:50%;background:var(--card);border:1.5px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-size:21px;transform:translate(-50%,-52px);opacity:0;z-index:8;transition:opacity .15s} .pt.go{background:var(--gold);color:#111}
 .mini{padding:8px 10px;border-radius:10px;font-size:15px;background:#1f3a26;flex:none} .mini.alt{background:#2a2a30}
 .c{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)} .c:first-of-type{border-top:0} .c input{width:21px;height:21px;accent-color:var(--acc);flex:none;margin:0} .c input:checked+span{color:var(--dim);text-decoration:line-through}
-.pl{position:relative;margin:6px -28px 14px;overflow:hidden;background:#000;touch-action:manipulation;-webkit-user-select:none;user-select:none}
-.pl .mv{width:100%;display:block;background:#000;min-height:56vw}
-.pl .bigp{position:absolute;left:50%;top:50%;width:88px;height:88px;margin:-70px 0 0 -44px;border-radius:50%;background:rgba(160,78,48,.94);color:#fff;font-size:54px;display:grid;place-items:center;padding-left:4px;transition:opacity .2s,transform .2s;box-shadow:0 6px 24px rgba(0,0,0,.5)}
-.pl.on .bigp,.pl.wait .bigp{opacity:0;transform:scale(.7);pointer-events:none}
-.pl .pc{position:absolute;left:0;right:0;bottom:0;padding:34px 12px 8px;background:linear-gradient(transparent,rgba(0,0,0,.9));transition:opacity .25s}
+.pl{position:relative;margin:6px 0 14px;border-radius:14px;overflow:hidden;background:#000;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.pl .mv{width:100%;height:74vw;max-height:64vh;object-fit:contain;display:block;background:#000}
+.pl .ctr{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);margin-top:-22px;display:flex;align-items:center;justify-content:space-evenly;transition:opacity .2s}
+.pl.idle .ctr,.pl.wait .ctr{opacity:0;pointer-events:none}
+.pl .bigp{width:92px;height:92px;border-radius:50%;background:rgba(160,78,48,.95);color:#fff;font-size:56px;display:grid;place-items:center;padding:0;box-shadow:0 6px 24px rgba(0,0,0,.5)} .pl .bigp:active{background:#8a4228}
+.pl .side{width:74px;height:74px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:46px;display:grid;place-items:center;padding:0} .pl .side:active{background:rgba(255,255,255,.2)}
+.pl svg{display:block}
+.pl .pc{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 6px;background:linear-gradient(transparent,rgba(0,0,0,.9));transition:opacity .25s}
 .pl.idle .pc{opacity:0;pointer-events:none}
-.pl .r1{display:flex;align-items:center;gap:10px} .pl .r2{display:flex;align-items:center;justify-content:space-between;margin-top:2px} .pl .mid{display:flex;align-items:center;gap:16px}
-.pl .pb{background:transparent;color:#fff;font-size:17px;font-weight:600;min-width:54px;min-height:46px;padding:8px 10px;border-radius:12px} .pl .pb:active{background:rgba(255,255,255,.18)}
-.pl .pp{font-size:34px;width:56px;min-width:56px;height:56px;min-height:56px;padding:0;display:grid;place-items:center;border-radius:50%;background:rgba(160,78,48,.96)} .pl .bigp svg,.pl .pp svg{display:block} .pl .pp:active{background:#8a4228}
+.pl .r1{display:flex;align-items:center;gap:10px} .pl .r2{display:flex;align-items:center;justify-content:space-between;margin-top:0}
+.pl .pb{background:transparent;color:#fff;font-size:18px;font-weight:700;min-width:62px;min-height:52px;padding:8px 10px;border-radius:12px;display:grid;place-items:center} .pl .pb:active{background:rgba(255,255,255,.18)}
+.pl .fs{font-size:34px}
 .pl .tm{font-size:13.5px;color:#f1eee7;font-variant-numeric:tabular-nums;min-width:38px;text-align:center}
 .pl .sk{position:relative;flex:1;height:36px;touch-action:none}
 .pl .sk:before{content:"";position:absolute;left:0;right:0;top:15px;height:6px;border-radius:4px;background:rgba(255,255,255,.2)}
 .pl .sk i{position:absolute;left:0;top:15px;height:6px;border-radius:4px;width:0} .pl .sk .bf{background:rgba(255,255,255,.34)} .pl .sk .pr{background:linear-gradient(90deg,var(--acc),var(--acc2))}
 .pl .sk b{position:absolute;top:8px;left:0;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(214,166,62,.25);transition:transform .12s} .pl.drag .sk b{transform:scale(1.3)}
-.pl .pvw{position:absolute;bottom:112px;left:8px;width:180px;border:2px solid var(--gold);border-radius:10px;overflow:hidden;background:#000;box-shadow:0 8px 26px rgba(0,0,0,.65);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .12s,transform .12s;pointer-events:none}
+.pl .pvw{position:absolute;bottom:106px;left:8px;width:184px;border:2px solid var(--gold);border-radius:10px;overflow:hidden;background:#000;box-shadow:0 8px 26px rgba(0,0,0,.65);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .1s,transform .1s;pointer-events:none}
 .pl.drag .pvw{opacity:1;transform:none}
-.pl .pvw video{width:100%;display:block;aspect-ratio:16/9;background:#000}
+.pl .pvw i{display:block;width:180px;height:101.25px;background-color:#000;background-repeat:no-repeat;background-size:1800px auto}
 .pl .pvw span{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);background:rgba(0,0,0,.74);color:#fff;font:700 12.5px/1 inherit;padding:4px 7px;border-radius:6px;font-variant-numeric:tabular-nums}
-.pl.nopv .pvw{width:auto;border:0;background:transparent;box-shadow:none} .pl.nopv .pvw video{display:none} .pl.nopv .pvw span{position:static;transform:none;display:inline-block;background:var(--gold);color:#111}
+.pl.nopv .pvw{width:auto;border:0;background:transparent;box-shadow:none} .pl.nopv .pvw i{display:none} .pl.nopv .pvw span{position:static;transform:none;display:inline-block;background:var(--gold);color:#111}
 .pl .ld{position:absolute;left:0;right:0;top:50%;margin-top:14px;text-align:center;font-size:13px;color:#f1eee7;pointer-events:none}
 .pl.wait:after{content:"";position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-50px 0 0 -20px;border:3px solid rgba(255,255,255,.22);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;pointer-events:none}
-.pl:fullscreen{margin:0;display:flex;align-items:center;justify-content:center} .pl:fullscreen .mv{width:100%;height:100%;object-fit:contain;min-height:0}
+.pl:fullscreen{margin:0;border-radius:0;display:flex;align-items:center;justify-content:center} .pl:fullscreen .mv{width:100%;height:100%;max-height:none}
 .ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px} #fv{margin-top:4px;opacity:.7}
 .toast{position:fixed;left:12px;right:12px;top:10px;z-index:20;background:var(--gold);color:#111;border-radius:14px;padding:12px 14px;font-weight:700;font-size:13.5px;box-shadow:0 8px 30px rgba(0,0,0,.55);transform:translateY(-160%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .toast.on{transform:none} .toast small{display:block;font-weight:500;margin-top:3px;opacity:.86}
@@ -101,35 +104,38 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   try { ck = JSON.parse(localStorage.getItem('fa_chk') || '[]') || []; } catch (e) { ck = []; }
   if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v) { try { ck = JSON.parse(v) || ck; if (D) render(D, ''); } catch (e) {} } }); } catch (e) {} }
   function fmt(x) { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ':' + ('0' + x % 60).slice(-2); }
-  var PLAY = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M7.5 4.2v15.6L20.5 12z"/></svg>', PAUSE = '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/></svg>';
-  function mkPlayer(w, src) {                                                      // власний плеєр, версія 4: міні-вікно кадру під час перемотки, більші кнопки, ∓10 с
-    w.className = 'pl nopv'; w.innerHTML = '<video class="mv" playsinline preload="auto"></video><div class="bigp">' + PLAY + '</div><div class="ld"></div>'
-      + '<div class="pvw"><video muted playsinline preload="auto"></video><span>0:00</span></div>'
+  var SV = function (b, st) { return '<svg viewBox="0 0 24 24" width="1em" height="1em" ' + (st ? 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' : 'fill="currentColor"') + '>' + b + '</svg>'; };
+  var PLAY = SV('<path d="M7.5 4.2v15.6L20.5 12z"/>'), PAUSE = SV('<path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/>');
+  var T10 = '<text x="12" y="15.4" font-size="7" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" font-family="sans-serif">10</text>';
+  var BK = SV('<path d="M3.6 12a8.4 8.4 0 1 0 2.5-6"/><path d="M3 3.4v4.6h4.6"/>' + T10, 1), FW = SV('<path d="M20.4 12a8.4 8.4 0 1 1-2.5-6"/><path d="M21 3.4v4.6h-4.6"/>' + T10, 1);
+  var FSI = SV('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', 1);
+  function mkPlayer(w, src) {                                                      // власний плеєр, версія 6: вищий, ∓10 с по боках, велика «на весь екран», міні-вікно з аркуша мініатюр
+    w.className = 'pl nopv'; w.innerHTML = '<video class="mv" playsinline preload="auto"></video>'
+      + '<div class="ctr"><button class="side bk">' + BK + '</button><button class="bigp">' + PLAY + '</button><button class="side fw">' + FW + '</button></div><div class="ld"></div>'
+      + '<div class="pvw"><i></i><span>0:00</span></div>'
       + '<div class="pc"><div class="r1"><span class="tm cur">0:00</span><div class="sk"><i class="bf"></i><i class="pr"></i><b></b></div><span class="tm dur">0:00</span></div>'
-      + '<div class="r2"><button class="pb sp">1×</button><div class="mid"><button class="pb bk">⟲ 10</button><button class="pb pp">' + PLAY + '</button><button class="pb fw">10 ⟳</button></div><button class="pb fs">⤢</button></div></div>';
-    var q = function (c) { return w.querySelector(c); }, v = q('.mv'), pp = q('.pp'), sk = q('.sk'), pr = q('.pr'), bf = q('.bf'), kn = sk.querySelector('b'), cur = q('.cur'), dur = q('.dur'), sp = q('.sp'), fs = q('.fs'), ld = q('.ld');
-    var pvw = q('.pvw'), pv = pvw.querySelector('video'), pvt = pvw.querySelector('span'), hid = null, drag = false, rates = [1, 1.25, 1.5, 2], ri = 0, last = 0, want = null, was = false, canPv = false;
-    var show = function () { w.classList.remove('idle'); clearTimeout(hid); if (!v.paused) hid = setTimeout(function () { if (!drag) w.classList.add('idle'); }, 2800); };
+      + '<div class="r2"><button class="pb sp">1×</button><button class="pb fs">' + FSI + '</button></div></div>';
+    var q = function (c) { return w.querySelector(c); }, v = q('.mv'), big = q('.bigp'), sk = q('.sk'), pr = q('.pr'), bf = q('.bf'), kn = sk.querySelector('b'), cur = q('.cur'), dur = q('.dur'), sp = q('.sp'), fs = q('.fs'), ld = q('.ld');
+    var pvw = q('.pvw'), pvi = pvw.querySelector('i'), pvt = pvw.querySelector('span'), hid = null, drag = false, rates = [1, 1.25, 1.5, 2], ri = 0, last = 0, want = null, was = false;
+    var show = function () { w.classList.remove('idle'); clearTimeout(hid); if (!v.paused) hid = setTimeout(function () { if (!drag) w.classList.add('idle'); }, 3000); };
     var tog = function () { if (v.paused) { var pz = v.play(); if (pz && pz.catch) pz.catch(function () {}); } else v.pause(); };
     var upd = function () { if (drag) return; var d = v.duration || 0, x = d ? v.currentTime / d : 0; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(v.currentTime); dur.textContent = fmt(d);
       if (d && v.buffered.length) bf.style.width = (v.buffered.end(v.buffered.length - 1) / d * 100) + '%'; };
     var jump = function (dt) { if (!v.duration) return; try { v.currentTime = Math.max(0, Math.min(v.duration - 0.05, v.currentTime + dt)); } catch (x) {} upd(); show(); };
-    // міні-вікно: другий екземпляр того самого файла перемотується слідом за пальцем; наступний стрибок — щойно показано попередній
-    var goPv = function () { if (want === null || pv.seeking || Math.abs(pv.currentTime - want) < 0.03) return; try { pv.currentTime = want; } catch (x) {} };
-    pv.addEventListener('seeked', goPv);
+    // міні-вікно: кадр береться з готового аркуша мініатюр (10 у ряд, по одному на секунду) — це лише зсув картинки, тому без затримки
+    var spr = new Image(); spr.onload = function () { pvi.style.backgroundImage = 'url("' + spr.src + '")'; w.classList.remove('nopv'); }; spr.src = src.replace(/\.mp4$/, '.jpg');
     var seek = function (e) { var r = sk.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), d = v.duration || 0; if (!d) return;
       want = x * d; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(want); pvt.textContent = fmt(want);
-      var W = w.clientWidth, pw = pvw.offsetWidth || 180, cx = r.left - w.getBoundingClientRect().left + x * r.width; pvw.style.left = Math.max(8, Math.min(W - pw - 8, cx - pw / 2)) + 'px';
-      if (canPv) goPv(); else { try { v.currentTime = want; } catch (z) {} } };
-    v.addEventListener('play', function () { w.classList.add('on'); pp.innerHTML = PAUSE; show(); });
-    v.addEventListener('pause', function () { w.classList.remove('on'); pp.innerHTML = PLAY; show(); });
+      var k = Math.max(0, Math.min(Math.floor(want), Math.ceil(d) - 1)); pvi.style.backgroundPosition = (-(k % 10) * 180) + 'px ' + (-Math.floor(k / 10) * 101.25) + 'px';
+      var W = w.clientWidth, pw = pvw.offsetWidth || 184, cx = r.left - w.getBoundingClientRect().left + x * r.width; pvw.style.left = Math.max(8, Math.min(W - pw - 8, cx - pw / 2)) + 'px'; };
+    v.addEventListener('play', function () { w.classList.add('on'); big.innerHTML = PAUSE; show(); });
+    v.addEventListener('pause', function () { w.classList.remove('on'); big.innerHTML = PLAY; show(); });
     ['timeupdate', 'progress', 'loadedmetadata', 'durationchange', 'seeked'].forEach(function (n) { v.addEventListener(n, upd); });
     v.addEventListener('waiting', function () { w.classList.add('wait'); }); ['playing', 'canplay', 'pause'].forEach(function (n) { v.addEventListener(n, function () { if (!ld.textContent) w.classList.remove('wait'); }); });
     v.addEventListener('click', function (e) { var now = Date.now(), r = v.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
-      if (now - last < 330 && (x < .35 || x > .65)) { tog(); jump(x < .5 ? -10 : 10); last = 0; return; }      // подвійний дотик збоку: ∓10 с
-      last = now; if (w.classList.contains('idle')) show(); else tog(); });
-    q('.bigp').addEventListener('click', tog); pp.addEventListener('click', tog);
-    q('.bk').addEventListener('click', function () { jump(-10); }); q('.fw').addEventListener('click', function () { jump(10); });
+      if (now - last < 330 && (x < .35 || x > .65)) { jump(x < .5 ? -10 : 10); last = 0; return; }      // подвійний дотик збоку: ∓10 с
+      last = now; if (w.classList.contains('idle') || v.paused) show(); else { clearTimeout(hid); w.classList.add('idle'); } });
+    big.addEventListener('click', tog); q('.bk').addEventListener('click', function () { jump(-10); }); q('.fw').addEventListener('click', function () { jump(10); });
     sk.addEventListener('pointerdown', function (e) { drag = true; was = !v.paused; if (was) v.pause(); w.classList.add('drag'); try { sk.setPointerCapture(e.pointerId); } catch (x) {} seek(e); show(); });
     sk.addEventListener('pointermove', function (e) { if (drag) seek(e); });
     ['pointerup', 'pointercancel'].forEach(function (n) { sk.addEventListener(n, function () { if (!drag) return; drag = false; w.classList.remove('drag');
@@ -139,7 +145,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
       if (w.requestFullscreen) { var z = w.requestFullscreen(); if (z && z.then) z.then(function () { try { screen.orientation.lock('landscape').catch(function () {}); } catch (x) {} }).catch(function () {}); }
       else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen(); });
-    // файл — цілком у пам'ять (тоді перемотка й міні-вікно працюють всюди); не вийшло — граємо напряму, як раніше
+    // файл — цілком у пам'ять (тоді перемотка працює всюди); не вийшло — граємо напряму, як раніше
     var direct = function () { ld.textContent = ''; w.classList.remove('wait'); v.src = src; tog(); };
     if (!window.fetch || !window.ReadableStream) { direct(); return; }
     w.classList.add('wait'); ld.textContent = 'завантажую…';
@@ -147,11 +153,11 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       var step = function () { return rd.read().then(function (z) { if (z.done) return new Blob(parts, {type: 'video/mp4'}); parts.push(z.value); got += z.value.length;
         ld.textContent = n ? 'завантажую ' + Math.round(got / n * 100) + ' %' : 'завантажую ' + (got / 1048576).toFixed(1).replace('.', ',') + ' МБ'; return step(); }); };
       return step(); })
-      .then(function (b) { if (!w.isConnected) return; var u = URL.createObjectURL(b); ld.textContent = ''; w.classList.remove('wait'); v.src = u; pv.src = u; canPv = true; w.classList.remove('nopv'); tog(); })
+      .then(function (b) { if (!w.isConnected) return; ld.textContent = ''; w.classList.remove('wait'); v.src = URL.createObjectURL(b); tog(); })
       .catch(function () { if (w.isConnected) direct(); });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 02:23', NEWS = 'Плеєр: більший значок «грати / пауза».', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 02:28', NEWS = 'Плеєр: вищий, кнопки ∓10 с по боках, велика кнопка на весь екран, міні-вікно кадру без затримки.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
