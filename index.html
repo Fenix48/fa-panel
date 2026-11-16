@@ -246,7 +246,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       me.log.push((me.mode === 'blob' ? 'з пам’яті' : 'напряму') + ': код ' + c + ' ' + ((v.error && v.error.message) || ''));
       if (me.mode === 'blob') { if (me.url) { try { URL.revokeObjectURL(me.url); } catch (e) {} me.url = null; } direct(); return; }
       w.classList.remove('wait', 'load'); ld.textContent = 'Відео не відкрилось. ' + me.log.join(' → ') + ' · ' + ((navigator.userAgent.match(/Chrome\/[0-9]+/) || [''])[0]) + '. Скинь цей екран директору.'; });
-    if (!window.fetch || !window.ReadableStream) { direct(); return; }
+    if (LOC || !window.fetch || !window.ReadableStream) { direct(); return; }      // програма для ПК: відео йде з диска потоком — повна якість, без завантаження цілком у пам'ять
     w.classList.add('wait', 'load'); ld.textContent = 'завантажую…';
     fetch(src, me.ac ? {signal: me.ac.signal} : {}).then(function (r) { me.log.push('мережа: відповідь ' + r.status); if (!r.ok || !r.body) throw new Error('відповідь ' + r.status); var n = +r.headers.get('Content-Length') || 0, got = 0, parts = [], rd = r.body.getReader();
       var step = function () { return rd.read().then(function (z) { if (z.done) return new Blob(parts, {type: 'video/mp4'}); parts.push(z.value); got += z.value.length;
@@ -256,7 +256,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 11:10', NEWS = 'Панель тепер є і програмою для ПК; у плеєрі — клавіші й кадр під мишею.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 11:17', NEWS = 'Програма для ПК показує відео в повній якості (1080p).', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -336,7 +336,9 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     setInterval(function () { if (document.hidden || rf.disabled || !D || document.getElementById('plr')) return;
       fetch('data.json?t=' + Date.now(), {cache: 'no-store'}).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (!j || rf.disabled || document.getElementById('plr')) return;
         if (sg(j) != sg(D)) render(j, 'оновлюється саме', 1); else { D = j; ft.textContent = 'дані на ' + (j.t || '') + ' · оновлюється саме'; } }).catch(function () {}); }, 15000);
-    var png = function () { fetch('ping?t=' + Date.now(), {cache: 'no-store'}).catch(function () {}); }; png(); setInterval(png, 5000); }
+    var png = function () { fetch('ping?t=' + Date.now(), {cache: 'no-store'}).catch(function () {}); }; png(); setInterval(png, 5000);
+    setInterval(function () { if (document.hidden || document.getElementById('plr')) return;      // вийшла нова версія панелі — відкрите вікно програми перезавантажується саме (не під час перегляду)
+      fetch('version.json?t=' + Date.now(), {cache: 'no-store'}).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.v && VER && j.v != VER && !document.getElementById('plr')) location.reload(); }).catch(function () {}); }, 20000); }
   // хвиля від дотику на кнопках панелі (не в плеєрі — там свої анімації)
   document.addEventListener('pointerdown', function (e) { var b = e.target && e.target.closest && e.target.closest('.v>button,.p>button,.rf'); if (!b || b.disabled) return;
     var r = b.getBoundingClientRect(), z = Math.max(r.width, r.height) * 2.3, s = document.createElement('span'); s.className = 'rp';
