@@ -191,6 +191,42 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 #pm i{font-style:normal;font-size:11.5px;color:var(--dim);white-space:nowrap} #pm i.ok{color:var(--ok)} #pm i.wip{color:var(--gold)}
 #pm .pmf{padding:8px 8px 4px;color:var(--dim);font-size:12px;border-top:1px solid var(--line);margin-top:4px}
 @media (hover:hover){#pm .pmi{cursor:pointer} #pm .pmi:hover{background:rgba(255,255,255,.05)} .pin.av:hover{box-shadow:0 0 0 2px var(--gold),0 0 14px rgba(214,166,62,.35)}}
+/* 16.11 — patch finish4: справжні кнопки в блоці назви, картка-трофей після завершення, згорнуті робочі картки, картка проекту з меню */
+.hero{padding:16px 16px 14px}
+.hero .ttl{font-size:18px;margin:5px 0 12px}
+.hero .prg{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--dim);margin:0 0 6px} .hero .prg b{color:var(--txt);font-size:14px}
+.hero .bar{margin-bottom:14px}
+.cps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cps button{background:#24242a;color:var(--txt);border:1px solid #34343c;padding:12px 4px;border-radius:12px;font-size:13.5px;font-weight:700;transition:transform .1s,background .15s}
+.cps button:active{background:#30303a;transform:scale(.96)} .cps button.ok{border-color:var(--ok);color:var(--ok);background:rgba(126,196,138,.1)}
+.go{display:block;width:100%;padding:15px;border-radius:14px;font-size:16px;font-weight:800;margin:0 0 10px;background:linear-gradient(180deg,#b65a37,#963f22);box-shadow:0 6px 18px rgba(160,78,48,.35);transition:transform .1s} .go:active{transform:scale(.97)}
+.hero.done{text-align:center;padding:22px 16px 14px;border:1.5px solid var(--gold);background:radial-gradient(120% 90% at 50% 0,rgba(214,166,62,.34),rgba(22,22,24,.96) 62%)}
+.hero .tro{font-size:76px;line-height:1;display:inline-block;filter:drop-shadow(0 6px 24px rgba(214,166,62,.55));animation:tfl 3.2s ease-in-out infinite} @keyframes tfl{50%{transform:translateY(-6px) rotate(-3deg)}}
+.hero .h1{font-size:30px;font-weight:900;letter-spacing:.5px;line-height:1.05;margin:10px 0 6px;background:linear-gradient(90deg,#f6dc8c,#fff 50%,#f6dc8c);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:fshine 3s linear infinite}
+.hero .when{color:var(--gold);font-size:12px;letter-spacing:1.8px;font-weight:700}
+.hero.done .ttl{font-size:16px;font-weight:700;margin:12px 0 14px;opacity:.92}
+.hero .sts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 14px} .hero .sts div{background:rgba(0,0,0,.28);border:1px solid rgba(214,166,62,.25);border-radius:12px;padding:9px 2px 7px}
+.hero .sts b{display:block;font-size:19px;color:var(--gold);font-variant-numeric:tabular-nums} .hero .sts span{font-size:9.5px;letter-spacing:1.2px;color:var(--dim)}
+.hero .again{background:transparent;color:var(--gold);font-size:13.5px;font-weight:700;padding:12px 10px 4px}
+.hero.pop{animation:hpop .8s cubic-bezier(.2,1.5,.4,1)} @keyframes hpop{0%{transform:scale(.9)}60%{transform:scale(1.025)}100%{transform:none}}
+.hpl:empty{display:none} .hpl{margin-top:12px;text-align:left}
+.plcap{font-size:12.5px;color:var(--gold);font-weight:700;letter-spacing:.4px;margin:0 2px 6px}
+.card.fld>h2{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px} .card.fld>h2:after{content:'згорнути ▴';color:var(--dim);letter-spacing:.4px;font-weight:600;font-size:11px;white-space:nowrap}
+.card.fld.fold>h2{margin:0} .card.fld.fold>h2:after{content:'показати ▾'} .card.fold>*:not(h2){display:none!important}
+#ps{position:fixed;left:0;top:0;right:0;bottom:0;z-index:55;background:rgba(5,5,6,.62);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#ps.on{opacity:1;pointer-events:auto}
+#ps .sh2{width:100%;max-width:520px;max-height:90vh;overflow:auto;background:#17171a;border:1px solid #33333a;border-bottom:0;border-radius:22px 22px 0 0;padding:10px 16px 24px;transform:translateY(100%);transition:transform .32s cubic-bezier(.2,.9,.2,1)}
+#ps.on .sh2{transform:none}
+@media (min-width:880px){#ps{align-items:center} #ps .sh2{border-radius:22px;border-bottom:1px solid #33333a}}
+#ps .grab{width:42px;height:5px;border-radius:3px;background:#3a3a42;margin:0 auto 12px}
+#ps .top{display:flex;gap:12px;align-items:center;margin-bottom:14px} #ps .num{width:52px;height:52px;border-radius:14px;background:var(--acc);display:grid;place-items:center;font-size:22px;font-weight:900;flex:none}
+#ps .top small{display:block;color:var(--gold);font-size:11px;letter-spacing:1.6px;font-weight:700} #ps .top b{display:block;font-size:16px;line-height:1.25;margin-top:2px}
+#ps .x{margin-left:auto;align-self:flex-start;width:38px;height:38px;border-radius:50%;background:#26262c;padding:0;display:grid;place-items:center;flex:none;font-size:20px}
+#ps .sts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 14px} #ps .sts div{background:#202024;border-radius:12px;padding:9px 4px;text-align:center}
+#ps .sts b{display:block;font-size:18px;color:var(--gold);font-variant-numeric:tabular-nums} #ps .sts span{font-size:9.5px;letter-spacing:1.2px;color:var(--dim)}
+#ps .opn2{display:block;width:100%;background:#24242a;border:1px solid #34343c;padding:13px;border-radius:12px;font-weight:700;font-size:14.5px;margin:0 0 10px}
+#ps .chp{margin:12px 0 0;padding:10px 12px;background:#1d1d21;border-radius:12px;font-size:12.5px;color:var(--dim);line-height:1.65;white-space:pre-line}
+#ps .nt{color:var(--dim);font-size:12.5px;margin:12px 0 0;text-align:center}
 </style>
 </head>
 <body>
@@ -264,41 +300,94 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     requestAnimationFrame(st); };
   function cele() { var w = document.getElementById('cele'); if (!w) { w = document.createElement('div'); w.id = 'cele'; document.body.appendChild(w);
       w.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('.bx') : null; if (b && !(e.target.closest('button'))) return;
-        w.classList.remove('on'); setTimeout(function () { if (!w.classList.contains('on')) w.innerHTML = ''; }, 400); }); }
+        w.classList.remove('on'); var hh = document.getElementById('hero'); if (hh) { try { scrollTo({top: 0, behavior: 'smooth'}); } catch (x) {} hh.classList.remove('pop'); void hh.offsetWidth; hh.classList.add('pop'); }
+        setTimeout(function () { if (!w.classList.contains('on')) w.innerHTML = ''; }, 400); }); }
     var s = (D && D.s) || [], ok = s.filter(function (x) { return x[2] == 'ok'; }).length;
     w.innerHTML = '<canvas></canvas><div class="bx"><div class="cup">🏆</div><h3>Серію завершено!</h3><p>Від першого кадру до публікації — усе пройдено.</p>'
       + '<div class="st"><div><b>' + (s.length ? ok + '/' + s.length : '✓') + '</b><span>ЧАСТИН</span></div><div><b>' + CHK.length + '/' + CHK.length + '</b><span>ПУНКТІВ</span></div><div><b>100%</b><span>ГОТОВО</span></div></div>'
       + '<p class="dm">Forsaken Atlas росте. Наступна серія буде ще сильніша.</p><button>Дякую 🔥</button></div>';
     if (!finDone()) { ck[FD] = true; finStore(); try { localStorage.setItem('fa_fin', String(Date.now())); } catch (x) {} }
-    finUpd();
+    finUpd(); if (D) render(D, '', 1);
     void w.offsetWidth; w.classList.add('on'); confetti(w.querySelector('canvas'), w); chime(); buzz('ok'); setTimeout(function () { buzz('heavy'); }, 420); }
   // 16.11 — patch finish2: «завершено» — позначка з індексом CHK.length у тому ж масиві (спільна для всіх пристроїв); блок назви вгорі; меню проектів
   var FD = CHK.length, finDone = function () { return !!ck[FD]; };
   var finStore = function () { var v = JSON.stringify(ck); try { localStorage.setItem('fa_chk', v); } catch (x) {} putChk(v); if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } };
   var lockUpd = function () { var d = finDone(), k = document.querySelector('.k-c'); [].forEach.call(document.querySelectorAll('.c input[data-c]'), function (x) { x.disabled = d; }); if (k) k.classList.toggle('lk', d); };
-  var heroUpd = function () { var h = document.getElementById('hero'); if (!h || !D) return; var d = finDone(), n = 0, i;
+  var curN = function () { var m = String((D && D.ep) || '').match(/\d+/); return m ? +m[0] : 0; };
+  var pjOf = function (n) { var a = (D && D.pj) || [], i; for (i = 0; i < a.length; i++) if (+a[i][0] == n) return a[i]; return null; };
+  var fmtD = function (x) { x = Math.round(+x || 0); var h = Math.floor(x / 3600), m = Math.floor(x % 3600 / 60), s2 = ('0' + x % 60).slice(-2); return h ? h + ':' + ('0' + m).slice(-2) + ':' + s2 : m + ':' + s2; };
+  var partList = function () { var out = [], vm = {}; if (!D || !D.vb) return out; (D.v || []).forEach(function (x) { vm[x[0]] = x; });
+    (D.s || []).forEach(function (x) { var v = x[4] && vm[x[4]]; if (v && v[2]) out.push({src: D.vb + v[2], name: x[1]}); }); return out; };
+  var canWatch = function (n) { return !!(D && ((LOC && D.fv && D.fv[n]) || (n == curN() && partList().length))); };
+  var CPS = function (p) { return p && (p[1] || p[6]) ? '<div class="cps">' + (p[1] ? '<button data-cp="1">📋 Назва</button>' : '') + (p[6] ? '<button data-cp="6">📋 Опис</button>' : '') + (p[7] ? '<button data-cp="7">📋 Теги</button>' : '') + '</div>' : ''; };
+  var unf = {};
+  var heroUpd = function () { var h = document.getElementById('hero'); if (!h || !D) return; var d = finDone(), n = 0, i, N0 = curN(), p = pjOf(N0), sl = D.s || [];
     for (i = 0; i < CHK.length; i++) if (ck[i]) n++;
-    var html = '<small>' + E(String(D.ep || 'Серія').toUpperCase()) + '</small><div class="ttl">' + E(D.nm || 'Назву ще не обрано') + '</div><div class="chip">' + (d ? '✅ ПРОЕКТ ЗАВЕРШЕНО' : '⏳ У РОБОТІ · ' + n + '/' + CHK.length + ' перед публікацією') + '</div>';
-    h.classList.toggle('done', d); if (h._h != html) { h.innerHTML = html; h._h = html; } };
+    var W = canWatch(N0) ? '<button class="go" data-watch="' + N0 + '">▶ Дивитись серію' + (p && p[3] ? ' · ' + fmtD(p[3]) : '') + '</button>' : '';
+    var html = d
+      ? '<div class="tro">🏆</div><div class="h1">ПРОЕКТ ЗАВЕРШЕНО</div><div class="when">' + E(String(D.ep || '').toUpperCase()) + (finTxt() ? ' · ' + E(finTxt().replace('✅ Проект завершено ', '')) : '') + '</div><div class="ttl">' + E(D.nm || '') + '</div>'
+        + '<div class="sts"><div><b>' + (sl.length || '—') + '</b><span>ЧАСТИН</span></div><div><b>' + (p && p[3] ? fmtD(p[3]) : '—') + '</b><span>ХВИЛИН</span></div><div><b>' + (p && p[4] ? p[4] : '—') + '</b><span>МІСЦЬ</span></div><div><b>' + CHK.length + '/' + CHK.length + '</b><span>ПУНКТІВ</span></div></div>'
+        + W + CPS(p) + '<button class="again" data-fin="1">🎉 Відсвяткувати ще раз</button>'
+      : '<small>' + E(String(D.ep || 'Серія').toUpperCase()) + ' · У РОБОТІ</small><div class="ttl">' + E(D.nm || 'Назву ще не обрано') + '</div>'
+        + '<div class="prg"><span>Перед публікацією</span><b>' + n + ' з ' + CHK.length + '</b></div><div class="bar"><i style="width:' + Math.round(n / CHK.length * 100) + '%"></i></div>' + W + CPS(p);
+    var hi = h.querySelector('.hin'); if (!hi) { h.innerHTML = '<div class="hin"></div><div class="hpl"></div>'; hi = h.querySelector('.hin'); }
+    h.classList.toggle('done', d); if (hi._h != html) { hi.innerHTML = html; hi._h = html; } };
+  var copyTxt = function (t, b) { var done = function (ok) { if (!b) return; var o = b.getAttribute('data-l') || b.textContent; b.setAttribute('data-l', o); b.classList.toggle('ok', ok); b.textContent = ok ? '✓ Скопійовано' : 'Не вийшло';
+      buzz(ok ? 'light' : 'heavy'); clearTimeout(b._t); b._t = setTimeout(function () { b.textContent = o; b.classList.remove('ok'); }, 1800); };
+    var fb = function () { try { var ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:-1000px;opacity:0'; document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+      var ok = document.execCommand('copy'); document.body.removeChild(ta); done(ok); } catch (x) { done(false); } };
+    if (!t) return done(false); if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { done(true); }, fb); else fb(); };
+  var watch = function (n, box) { if (!box || !D) return; var old = document.getElementById('plr');
+    if (old) { var same = old.getAttribute('data-src') == 'ep' + n; shut(old); if (same) return; }
+    var L = LOC && D.fv && D.fv[n] ? [{src: D.vb + D.fv[n], name: 'Заброшки ' + n + ' · повне відео'}] : (n == curN() ? partList() : []);
+    if (!L.length) { say('Повне відео цієї серії — у програмі на ПК'); return; }
+    var cap = document.createElement('div'), w = document.createElement('div'), k = 0; cap.className = 'plcap'; w.id = 'plr'; w.setAttribute('data-src', 'ep' + n); w._cap = cap;
+    box.appendChild(cap); box.appendChild(w);
+    var go = function () { cap.textContent = L.length > 1 ? '▶ Частина ' + (k + 1) + ' з ' + L.length + ' · ' + L[k].name : '▶ ' + L[k].name; mkPlayer(w, L[k].src); var me = CUR;
+      if (me && me.v) me.v.addEventListener('ended', function () { if (CUR !== me) return; if (++k < L.length) go(); else cap.textContent = '✅ Серію переглянуто до кінця'; }); };
+    go(); setTimeout(function () { try { cap.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch (x) {} }, 120); };
+  var ps = null;
+  var psClose = function () { if (!ps) return; var o = ps.querySelector('#plr'); if (o) shut(o); ps.classList.remove('on'); };
+  var openPs = function (n) { var p = pjOf(n); if (!p) return;
+    if (!ps) { ps = document.createElement('div'); ps.id = 'ps'; document.body.appendChild(ps);
+      ps.addEventListener('click', function (e) { if (e.target === ps) return psClose(); var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b) return; var n2 = +ps.getAttribute('data-n'), q = pjOf(n2);
+        if (b.classList.contains('x')) psClose();
+        else if (b.getAttribute('data-cp') && q) copyTxt(String(q[+b.getAttribute('data-cp')] || ''), b);
+        else if (b.getAttribute('data-watch')) watch(n2, ps.querySelector('.hpl'));
+        else if (b.getAttribute('data-open') && LOC && window.fetch) fetch('open', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ep: n2})})
+          .then(function (r) { say(r.ok ? '📂 Відкрито теку «Заброшки ' + n2 + ' / МОЄ»' : 'Теку не знайдено'); }).catch(function () {}); }); }
+    var cur = n == curN(), st = cur ? (finDone() ? '✅ ЗАВЕРШЕНО' : '⏳ У РОБОТІ') : (p[2] ? '✅ ГОТОВО' : '—');
+    var chp = String(p[6] || '').split('\n').filter(function (l) { return /^\d{1,2}:\d{2}(:\d{2})? /.test(l.trim()); }).join('\n');
+    ps.setAttribute('data-n', n);
+    ps.innerHTML = '<div class="sh2"><div class="grab"></div><div class="top"><div class="num">' + n + '</div><div><small>ЗАБРОШКИ ' + n + ' · ' + st + '</small><b>' + E(p[1] || 'Назви в описі нема') + '</b></div><button class="x">' + XI + '</button></div>'
+      + '<div class="sts"><div><b>' + (p[3] ? fmtD(p[3]) : '—') + '</b><span>ТРИВАЛІСТЬ</span></div><div><b>' + (p[4] || '—') + '</b><span>МІСЦЬ</span></div><div><b>' + E(String(p[5] || '—').slice(0, 5)) + '</b><span>ЗІБРАНО</span></div></div>'
+      + (canWatch(n) ? '<button class="go" data-watch="' + n + '">▶ Дивитись серію</button>' : '')
+      + (LOC ? '<button class="opn2" data-open="1">📂 Відкрити теку МОЄ</button>' : '')
+      + CPS(p) + (chp ? '<div class="chp">' + E(chp) + '</div>' : '')
+      + (!LOC && !canWatch(n) ? '<div class="nt">Повне відео цієї серії відкривається в програмі на ПК.</div>' : '')
+      + '<div class="hpl"></div></div>';
+    void ps.offsetWidth; ps.classList.add('on'); buzz('light'); };
+  var hero = document.getElementById('hero');
+  if (hero) hero.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b || !D) return; var N0 = curN();
+    if (b.getAttribute('data-cp')) { var p = pjOf(N0); if (p) copyTxt(String(p[+b.getAttribute('data-cp')] || ''), b); }
+    else if (b.getAttribute('data-watch')) watch(+b.getAttribute('data-watch'), hero.querySelector('.hpl'));
+    else if (b.getAttribute('data-fin')) cele(); });
   var av = document.getElementById('av'), pm = null;
   var pmList = function () { var pj = (D && D.pj) || [], cur = pj.length ? pj[0][0] : 0;
     if (!pj.length) return '<div class="pmh">ПРОЕКТИ</div><div class="pmf">Список з\'явиться після оновлення даних.</div>';
     return '<div class="pmh">ПРОЕКТИ<span>' + pj.length + '</span></div>' + pj.map(function (p, i) {
       var st = p[0] == cur ? (finDone() ? '<i class="ok">✅ завершено</i>' : '<i class="wip">⏳ у роботі</i>') : (p[2] ? '<i class="ok">✅ готово</i>' : '<i>—</i>');
       return '<button class="pmi' + (p[0] == cur ? ' cur' : '') + '" data-ep="' + (+p[0]) + '" style="--i:' + i + '"><span class="pno">' + (+p[0]) + '</span><span class="pmt"><b>Заброшки ' + (+p[0]) + '</b><small>' + E(p[1] || 'назви в описі нема') + '</small></span>' + st + '</button>'; }).join('')
-      + '<div class="pmf">' + (LOC ? 'Натисни на серію — відкриється її тека МОЄ.' : 'Теки серій відкриваються в програмі на ПК.') + '</div>'; };
+      + '<div class="pmf">' + 'Натисни на серію — її картка: відео, назва, опис, теги.' + '</div>'; };
   var pmClose = function () { if (pm) pm.classList.remove('on'); if (av) av.classList.remove('opn'); };
   var pmOpen = function () { if (!pm) { pm = document.createElement('div'); pm.id = 'pm'; document.body.appendChild(pm);
-      pm.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('[data-ep]') : null; if (!b) return; var n = +b.getAttribute('data-ep'); pmClose();
-        if (LOC && window.fetch) fetch('open', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ep: n})})
-          .then(function (r) { say(r.ok ? '📂 Відкриваю теку «Заброшки ' + n + ' / МОЄ»' : 'Теку не знайдено', r.ok ? 'Вона з\'явиться в Провіднику.' : ''); }).catch(function () {});
-        else say('Заброшки ' + n, 'Теки серій відкриваються в програмі на ПК.'); }); }
+      pm.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('[data-ep]') : null; if (!b) return; var n = +b.getAttribute('data-ep'); pmClose(); openPs(n); }); }
     var r = av.getBoundingClientRect(); pm.style.left = Math.max(12, r.left - 2) + 'px'; pm.style.top = (r.bottom + 10) + 'px';
     pm.innerHTML = pmList(); void pm.offsetWidth; pm.classList.add('on'); av.classList.add('opn'); buzz('light'); };
   if (av) { av.addEventListener('click', function (e) { e.stopPropagation(); if (pm && pm.classList.contains('on')) pmClose(); else pmOpen(); });
     av.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); av.click(); } }); }
   document.addEventListener('click', function (e) { if (pm && pm.classList.contains('on') && !(e.target && e.target.closest && (e.target.closest('#pm') || e.target.closest('#av')))) pmClose(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') pmClose(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { pmClose(); psClose(); } });
   window.addEventListener('scroll', function () { if (pm && pm.classList.contains('on')) pmClose(); }, {passive: true});
   var ckSave = function (v) { try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } };
   var chkUrl = function () { return (!LOC && D && /^https:\/\//.test(D.vb || '') && okG(G)) ? D.vb.replace(/\/v\/?$/, '/chk') : ''; };
@@ -323,7 +412,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var CUR = null;                                                                  // відкритий плеєр: перед новим старий закривається й звільняє пам'ять
   function killPlayer() { var c = CUR; CUR = null; if (!c) return; try { if (c.ac) c.ac.abort(); } catch (e) {} try { c.v.pause(); c.v.removeAttribute('src'); c.v.load(); } catch (e) {}
     if (c.url) { try { URL.revokeObjectURL(c.url); } catch (e) {} } }
-  function shut(old) { killPlayer(); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls');      // закрити плеєр: згортається плавно
+  function shut(old) { killPlayer(); if (old._cap && old._cap.parentNode) old._cap.parentNode.removeChild(old._cap); old.removeAttribute('id'); old.style.setProperty('--h', old.offsetHeight + 'px'); old.classList.add('cls');      // закрити плеєр: згортається плавно
     setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 300); }
   function mkPlayer(w, src) {                                                      // власний плеєр, версія 7
     killPlayer();
@@ -409,7 +498,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 13:58', NEWS = 'Аватарка з меню проектів, назва серії вгорі, диск C: і свіжі ліміти; після святкування позначки замкнено 🔒', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 14:13', NEWS = 'Справжні кнопки: «Дивитись серію», «Назва / Опис / Теги» копіюються для YouTube; після завершення — картка-трофей; у меню — картка кожного проекту', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = '<button class="tq">' + XI + '</button>' + E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);      // хрестик прибирає плашку без дії
     toast.onclick = function (e) { toast.classList.remove('on'); if (fn && !(e && e.target && e.target.closest && e.target.closest('.tq'))) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -429,13 +518,13 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     if (d.g) o += '<div class="row"' + I() + '><b>Gemini · сьогодні</b><span>' + E(d.g) + '</span></div>';
     (d.pc || []).forEach(function (x) { o += '<div class="row"' + I() + '><b>' + E(x[0]) + ' — ' + N('p' + x[0], Math.round(x[1] * 100)) + ' %</b><span>' + E(x[2]) + '</span></div>' + bar(x[1], 'p' + x[0]); });
     o += '<div class="note"' + I() + '>Гроші й залишок Gemini тут не видно — лише в Google AI Studio.</div></div>';
-    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ', 'k-c' + (finDone() ? ' lk' : '')) + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + (finDone() ? ' disabled' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>' + (LOC || chkUrl() ? 'Позначки спільні: телефон, браузер і програма на ПК.' : 'Позначки зберігаються на цьому пристрої.') + '</div>' + FIN() + '</div>';
+    o += C('ПЕРЕД ПУБЛІКАЦІЄЮ', 'k-c' + (finDone() ? ' lk fld' + (unf.k ? '' : ' fold') : '')) + CHK.map(function (t, i) { return '<label class="c"' + I() + '><input type="checkbox" data-c="' + i + '"' + (ck[i] ? ' checked' : '') + (finDone() ? ' disabled' : '') + '><span><span class="tx">' + E(t) + '</span></span></label>'; }).join('') + '<div class="note"' + I() + '>' + (LOC || chkUrl() ? 'Позначки спільні: телефон, браузер і програма на ПК.' : 'Позначки зберігаються на цьому пристрої.') + '</div>' + FIN() + '</div>';
     o += '</div><div class="col">';
     // одна картка замість двох («Серія» + «Відео в чаті»; автор, 16.11: «два вікна лишні, можна одне»): у рядку частини — її стан і кнопки найновішого відео
     var vm = {}, used = {}; (d.v || []).forEach(function (x) { vm[x[0]] = x; });
     var WB = function (x) { return (d.vb && x[2] ? '<button class="wb" data-p="' + E(d.vb + x[2]) + '">▶<span> Дивитись</span></button>' : '') + '<button class="mini alt" data-m="' + E(x[0]) + '">💬</button>'; };
     if ((d.s && d.s.length) || (d.v && d.v.length)) { var okc = (d.s || []).filter(function (x) { return x[2] == 'ok'; }).length;
-      o += C(d.s && d.s.length ? 'СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length : 'ВІДЕО В ЧАТІ');
+      o += C(d.s && d.s.length ? 'СЕРІЯ · СХВАЛЕНО ' + okc + ' З ' + d.s.length : 'ВІДЕО В ЧАТІ', finDone() ? 'fld' + (unf.s ? '' : ' fold') : '');
       (d.s || []).forEach(function (x) { var v = x[4] && vm[x[4]], ver = v ? ((String(v[1]).match(/ (v\d+)$/) || [])[1] || '') : ''; if (v) used[v[0]] = 1;
         o += '<div class="p ' + E(x[2]) + '"' + I() + '><div class="n">' + E(x[0]) + '</div><div class="dot"></div><div class="t">' + E(x[1]) + (ver ? '<em>' + E(ver) + '</em>' : '') + (x[2] != 'ok' && x[3] ? '<small>' + E(x[3]) + '</small>' : '') + '</div>'
           + (x[2] == 'ok' ? '<div class="s">' + E(x[3]) + '</div>' : '')
@@ -479,6 +568,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   else if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('g', function (err, v) { if (!err && okG(v)) { G = v; try { localStorage.setItem('fa_g', G); } catch (e) {} start(); } else nodata(); }); } catch (e) { nodata(); } }
   else nodata();
   app.addEventListener('click', function (e) { var el = e.target; if (el && el.closest) el = el.closest('button') || el; if (!el || !el.getAttribute) return;
+    if (el.tagName == 'H2' && el.parentNode && el.parentNode.classList.contains('fld')) { var fc = el.parentNode; fc.classList.toggle('fold'); unf[fc.classList.contains('k-c') ? 'k' : 's'] = !fc.classList.contains('fold'); return; }
     var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
     if (pv) { if (el.blur) el.blur(); var old = document.getElementById('plr'), same = old && old.getAttribute('data-src') == pv;
       if (old) shut(old);
@@ -486,7 +576,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
         w.style.setProperty('--h', w.offsetHeight + 'px'); w.classList.add('opn'); setTimeout(function () { w.classList.remove('opn'); }, 480); }      // розгортається плавно
       return; }
     var go = function (p) { var u = 'https://t.me/' + ((D && D.b) || 'Video55_YouTube_bot') + '?start=' + p; if (tg && tg.openTelegramLink) { tg.openTelegramLink(u); try { tg.close(); } catch (x) {} } else if (LOC) location.href = 'tg://resolve?domain=' + ((D && D.b) || 'Video55_YouTube_bot') + '&start=' + p; else location.href = u; };
-    if (el.getAttribute('data-unl')) { var uq = 'Розблокувати позначки? Проект знову буде «у роботі».', un = function () { ck[FD] = false; finStore(); try { localStorage.removeItem('fa_fin'); } catch (x) {} finUpd(); };
+    if (el.getAttribute('data-unl')) { var uq = 'Розблокувати позначки? Проект знову буде «у роботі».', un = function () { ck[FD] = false; finStore(); try { localStorage.removeItem('fa_fin'); } catch (x) {} finUpd(); if (D) render(D, '', 1); };
       if (tg && tg.showConfirm) tg.showConfirm(uq, function (y) { if (y) un(); }); else if (confirm(uq)) un(); return; }
     if (el.getAttribute('data-fin')) { cele(); return; }
     var m = el.getAttribute('data-m'), ok = el.getAttribute('data-ok'), fx = el.getAttribute('data-fx');
