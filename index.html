@@ -187,11 +187,24 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     IO.unobserve(x.target); x.target.classList.add('rv'); x.target.classList.remove('wt'); cnt(x.target); }); }, {threshold: 0.06}) : null;
   var CHK = ['Схвалити всі десять частин', 'Переглянути зібраний епізод цілком', 'Обкладинки: запустити в YouTube тест A / B / D', 'Назва й опис — із файла директора', 'Розділи (таймкоди) в описі', 'Список авторів фото й відео в описі', 'Позначка YouTube «змінений вміст» — за переліком кадрів від директора'], ck = [];
   try { ck = JSON.parse(localStorage.getItem('fa_chk') || '[]') || []; } catch (e) { ck = []; }
-  if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v) { try { ck = JSON.parse(v) || ck; if (D) render(D, '', 1); } catch (e) {} } }); } catch (e) {} }
-  // програма для ПК: позначки — у файлі на ПК (не зітре ні браузер, ні перезапуск програми); файла ще нема — переносимо туди позначки з пам'яті браузера
-  var putChk = function (v) { if (LOC && window.fetch) fetch('chk', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: v}).catch(function () {}); };
-  if (LOC && window.fetch) fetch('chk.json?t=' + Date.now(), {cache: 'no-store'}).then(function (r) { if (r.status == 404) { if (ck.some(function (x) { return x; })) putChk(JSON.stringify(ck)); return null; } return r.ok ? r.json() : null; })
-    .then(function (j) { if (Array.isArray(j)) { ck = j; try { localStorage.setItem('fa_chk', JSON.stringify(ck)); } catch (e) {} if (D) render(D, '', 1); } }).catch(function () {});
+  if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v && !ckCloud) { try { ck = JSON.parse(v) || ck; if (D) render(D, '', 1); } catch (e) {} } }); } catch (e) {} }
+  // 16.11.2026 — позначки спільні для телефона, браузера й програми на ПК (згода автора в чаті на ПК: «Дозволяю сховище на Cloudflare»). Сховище — обробник /chk
+  // поруч із відео панелі, ключ — той самий ?g=; програма для ПК ходить туди сама (chk.json / chk). Пам'ять браузера й сховище Telegram лишаються запасом
+  var ckAt = 0, ckCloud = false, nrm = function (a) { var o = [], i; for (i = 0; i < a.length; i++) o.push(!!a[i]); return o; };
+  var ckBox = function () { [].forEach.call(document.querySelectorAll('.c input[data-c]'), function (x) { x.checked = !!ck[+x.getAttribute('data-c')]; }); };      // на місці, без перемальовування
+  var ckSave = function (v) { try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } };
+  var chkUrl = function () { return (!LOC && D && /^https:\/\//.test(D.vb || '') && okG(G)) ? D.vb.replace(/\/v\/?$/, '/chk') : ''; };
+  var putChk = function (v) { ckAt = Date.now(); if (!window.fetch) return;
+    if (LOC) fetch('chk', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: v}).catch(function () {});
+    else if (chkUrl()) fetch(chkUrl(), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{"k":' + JSON.stringify(G) + ',"ck":' + JSON.stringify(nrm(JSON.parse(v))) + '}'}).catch(function () {}); };
+  var pullChk = function () { var t0 = Date.now(), u = chkUrl(); if (!window.fetch || (!LOC && !u)) return;
+    (LOC ? fetch('chk.json?t=' + t0, {cache: 'no-store'}) : fetch(u, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({k: G})}))
+      .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (!j || t0 < ckAt) return;      // поки йшла відповідь, автор щось позначив — його дія новіша
+        if (j.t && Array.isArray(j.ck)) { ckCloud = true; if (JSON.stringify(nrm(j.ck)) != JSON.stringify(nrm(ck))) { ck = nrm(j.ck); ckSave(JSON.stringify(ck)); ckBox(); } }
+        else if (ck.some(function (x) { return x; })) putChk(JSON.stringify(ck)); })      // у сховищі ще нічого — переносимо туди позначки цього пристрою
+      .catch(function () {}); };
+  setInterval(function () { if (!document.hidden) pullChk(); }, 20000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) pullChk(); });
   function fmt(x) { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ':' + ('0' + x % 60).slice(-2); }
   var SV = function (b, st) { return '<svg viewBox="0 0 24 24" width="1em" height="1em" ' + (st ? 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' : 'fill="currentColor"') + '>' + b + '</svg>'; };
   var PLAY = SV('<path d="M7.5 4.2v15.6L20.5 12z"/>'), PAUSE = SV('<path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/>');
@@ -288,7 +301,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 11:45', NEWS = 'Програма для ПК: позначки чекліста зберігаються у файлі на ПК.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 11:59', NEWS = 'Позначки чекліста спільні: телефон, браузер і програма на ПК.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = '<button class="tq">' + XI + '</button>' + E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);      // хрестик прибирає плашку без дії
     toast.onclick = function (e) { toast.classList.remove('on'); if (fn && !(e && e.target && e.target.closest && e.target.closest('.tq'))) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -335,7 +348,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     fetch(LOC ? 'data.json?t=' + Date.now() : 'https://gist.githubusercontent.com/' + own + '/' + encodeURIComponent(G) + '/raw/data.json?t=' + Date.now(), {cache: 'no-store'})
       .then(function (r) { if (!r.ok) throw new Error('код ' + r.status); return r.text(); })
       .then(function (t) { return new Promise(function (ok) { setTimeout(function () { ok(t); }, Math.max(0, (soft ? 900 : 650) - (Date.now() - t0))); }); })      // щоб анімацію було видно й на швидкій мережі
-      .then(function (t) { render(JSON.parse(t), 'оновлено щойно', soft); again(ft, 'fl'); again(pin, 'ok'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
+      .then(function (t) { render(JSON.parse(t), 'оновлено щойно', soft); pullChk(); again(ft, 'fl'); again(pin, 'ok'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
       .catch(function (e) { ft.textContent = e.message == 'код 404'
           ? 'дані не знайдено (код 404). Відкрий панель кнопкою «🪟 Панель серії» під закріпленим табло в чаті з ботом.'
           : 'не вдалося оновити (' + e.message + '): нема мережі або забагато запитів — спробуй за хвилину';
