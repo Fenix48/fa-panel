@@ -256,13 +256,33 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 #ps .nt{color:var(--dim);font-size:12.5px;margin:2px 0 12px;text-align:center}
 #lb{position:fixed;left:0;top:0;right:0;bottom:0;z-index:70;background:rgba(0,0,0,.92);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .2s} #lb.on{opacity:1;pointer-events:auto} #lb img{max-width:96vw;max-height:90vh;border-radius:10px}
 @media (hover:hover){#ps button.chr{cursor:pointer} #ps button.chr:hover{background:rgba(255,255,255,.04)} #ps .cvi{cursor:zoom-in} #ps .cvi:hover{border-color:var(--gold)}}
+/* 16.11 — patch site1: сайт — розділи, навігація, головна, каталог серій */
+body.r-home #app,body.r-home #cat{display:none}
+body.r-series #home1,body.r-series #home2,body.r-series #hero,body.r-series #app{display:none}
+body.r-work #home1,body.r-work #home2,body.r-work #cat{display:none}
+.rtin{animation:rtin .38s cubic-bezier(.2,.8,.2,1) both} @keyframes rtin{from{opacity:0;transform:translateY(10px)}}
+.zban{border-radius:20px;overflow:hidden;border:1px solid #3a1d14;margin:0 0 12px;background:#1a0b07;box-shadow:0 10px 30px rgba(160,60,30,.18)} .zban img{display:block;width:100%;height:auto;aspect-ratio:1600/512;object-fit:cover}
+.zkp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px} .zkp div{background:rgba(22,22,24,.94);border:1px solid var(--line);border-radius:14px;padding:12px 4px;text-align:center}
+.zkp b{display:block;font-size:22px;color:var(--gold);font-weight:800;font-variant-numeric:tabular-nums} .zkp span{font-size:9.5px;letter-spacing:1.3px;color:var(--dim)}
+.zsh{display:flex;align-items:baseline;justify-content:space-between;margin:22px 2px 10px} .zsh h2{margin:0} .zsh a{color:var(--gold);font-size:13px;font-weight:700;text-decoration:none}
+#cat .zsh{margin-top:4px}
+.zsg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:6px}
+.zsc{display:block;border-radius:16px;overflow:hidden;background:rgba(22,22,24,.96);border:1px solid var(--line);color:var(--txt);text-decoration:none;transition:transform .15s,border-color .15s;-webkit-tap-highlight-color:transparent} .zsc:active{transform:scale(.98)}
+.zsc .zim{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#4a2010,#141416 70%);display:grid;place-items:center;overflow:hidden} .zsc .zim img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover}
+.zsc .zbn{font-size:58px;font-weight:900;color:rgba(255,255,255,.16)} .zsc .zdu{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.82);color:#fff;font-size:12px;font-weight:700;padding:3px 7px;border-radius:6px;font-variant-numeric:tabular-nums}
+.zsc .ztx{padding:10px 12px 12px} .zsc .ztx small{display:block;color:var(--gold);font-size:10.5px;letter-spacing:1.5px;font-weight:700} .zsc .ztx b{display:block;font-size:15px;line-height:1.3;margin-top:4px} .zsc .ztx i{display:block;font-style:normal;color:var(--dim);font-size:12px;margin-top:5px}
+.znav a{text-decoration:none;color:var(--dim);display:flex;align-items:center;gap:7px;font-weight:700;font-size:14px;border-radius:12px;transition:color .15s,background .15s} .znav a svg{width:20px;height:20px;flex:none} .znav a.on{color:var(--gold)}
+@media (max-width:879px){.znav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:space-around;background:rgba(16,16,18,.97);border-top:1px solid #2a2a30;padding:6px 8px calc(6px + env(safe-area-inset-bottom));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .znav a{flex-direction:column;gap:3px;font-size:11px;padding:6px 10px;flex:1;max-width:130px} .znav a.on{background:rgba(214,166,62,.10)} body{padding-bottom:calc(88px + env(safe-area-inset-bottom))}}
+@media (min-width:880px){.znav{display:flex;gap:4px;margin-right:6px} .znav a{padding:10px 14px} .znav a.on{background:rgba(214,166,62,.12)} #home1,#home2,#cat,#hero{max-width:1180px;margin-left:auto;margin-right:auto}}
+@media (hover:hover){.zsc:hover{border-color:var(--gold);transform:translateY(-2px)} .znav a:hover{color:var(--txt);background:rgba(255,255,255,.05)}}
 </style>
 </head>
-<body>
+<body class="r-home">
 <div class="pg" id="pg"></div>
 <div class="pt" id="pt">⟳</div>
-<div class="hd"><div class="pin av" id="av" role="button" tabindex="0" aria-label="Проекти"><img src="icon-192.png" alt=""></div><div class="w"><small>FORSAKEN ATLAS</small><b>Панель серії</b></div><button id="rf" class="rf" style="display:none"><span class="ic">⟳</span>Оновити</button></div>
-<div class="hero" id="hero"></div><div id="app"><div class="card"><div class="sh" style="width:32%"></div><div class="sh" style="width:58%;height:24px"></div><div class="sh"></div><div class="note">Завантажую дані…</div></div><div class="card"><div class="sh" style="width:26%"></div><div class="sh" style="width:78%"></div><div class="sh"></div><div class="sh" style="width:66%"></div><div class="sh"></div></div></div>
+<div class="hd"><div class="pin av" id="av" role="button" tabindex="0" aria-label="Проекти"><img src="icon-192.png" alt=""></div><div class="w"><small>FORSAKEN ATLAS</small><b>Панель серії</b></div><nav class="znav" id="znav"></nav><button id="rf" class="rf" style="display:none"><span class="ic">⟳</span>Оновити</button></div>
+<section id="home1"></section><div class="hero" id="hero"></div><section id="home2"></section><section id="cat"></section><div id="app"><div class="card"><div class="sh" style="width:32%"></div><div class="sh" style="width:58%;height:24px"></div><div class="sh"></div><div class="note">Завантажую дані…</div></div><div class="card"><div class="sh" style="width:26%"></div><div class="sh" style="width:78%"></div><div class="sh"></div><div class="sh" style="width:66%"></div><div class="sh"></div></div></div>
 <div class="ft" id="ft"></div>
 <div class="ft" id="fv"></div>
 <div class="toast" id="toast"></div>
@@ -394,9 +414,42 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     return {prev: i > 0 ? function () { hop(all[i - 1]); } : null, next: i < all.length - 1 ? function () { hop(all[i + 1]); } : null}; };
   if (!LOC) setInterval(function () { if (document.hidden || !G || !D || document.getElementById('plr') || (pm && pm.classList.contains('on')) || (ps && ps.classList.contains('on'))      // pcfix
       || document.querySelector('#cele.on') || (rf && rf.disabled)) return; refresh(true); }, 60000);
+  // patch site1: сайт — «Головна / Серії / Робота», адреси #/…, сторінка серії #/s/N
+  var RT = 'home', pend = null, navIn = false, TT = {home: 'Головна', series: 'Серії', work: 'Робота над серією'};
+  var covList = function (n) { var a = []; if (LOC && D && D.cv && D.cv[n]) a = D.cv[n].map(function (c) { return [D.vb + c[0], c[1]]; });
+    else if (D && D.cvu && D.cvu[n] && D.vb) { var cb = D.vb.replace(/v\/?$/, 'c/'); a = D.cvu[n].map(function (c) { return [cb + c[0], c[1]]; }); } return a; };
+  var card = function (p) { var n = +p[0], c = covList(n)[0], cur = n == curN(), st = cur ? (finDone() ? '✅ ЗАВЕРШЕНО' : '⏳ У РОБОТІ') : (p[2] ? '✅ ГОТОВО' : '');
+    return '<a class="zsc" href="#/s/' + n + '"><div class="zim">' + (c ? '<img src="' + E(c[0]) + '" alt="" loading="lazy">' : '<span class="zbn">' + n + '</span>') + (p[3] ? '<span class="zdu">' + fmtD(p[3]) + '</span>' : '') + '</div>'
+      + '<div class="ztx"><small>ЗАБРОШКИ ' + n + (st ? ' · ' + st : '') + '</small><b>' + E(p[1] || 'Назви в описі нема') + '</b><i>' + [p[4] ? p[4] + ' місць' : '', p[5] ? E(String(p[5])) : ''].filter(Boolean).join(' · ') + '</i></div></a>'; };
+  var homeUpd = function () { if (!D) return; var pj = D.pj || [], h1 = document.getElementById('home1'), h2 = document.getElementById('home2'), ct = document.getElementById('cat'), sec = 0, i;
+    for (i = 0; i < pj.length; i++) sec += +pj[i][3] || 0;
+    var a = '<div class="zban"><img src="banner.jpg" alt="Forsaken Atlas — the places the world left behind"></div><div class="zkp"><div><b>' + (pj.length || '—') + '</b><span>СЕРІЙ</span></div><div><b>' + (sec ? (sec / 3600).toFixed(1).replace('.', ',') : '—') + '</b><span>ГОДИН ВІДЕО</span></div>'
+      + '<div><b>' + (pj[0] && pj[0][5] ? E(String(pj[0][5]).slice(0, 5)) : '—') + '</b><span>ОСТАННЯ СЕРІЯ</span></div></div>';
+    var b = pj.length ? '<div class="zsh"><h2>ОСТАННІ СЕРІЇ</h2><a href="#/series">Усі ' + pj.length + ' →</a></div><div class="zsg">' + pj.slice(0, 3).map(card).join('') + '</div>' : '';
+    var c = pj.length ? '<div class="zsh"><h2>УСІ СЕРІЇ · ' + pj.length + '</h2></div><div class="zsg">' + pj.map(card).join('') + '</div>' : '<div class="card"><div class="note" style="margin:0">Список серій з\'явиться після оновлення даних.</div></div>';
+    if (h1 && h1._h != a) { h1.innerHTML = a; h1._h = a; } if (h2 && h2._h != b) { h2.innerHTML = b; h2._h = b; } if (ct && ct._h != c) { ct.innerHTML = c; ct._h = c; } };
+  var NAVH = function () { return '<a href="#/" data-r="home">' + SV('<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>', 1) + '<span>Головна</span></a>'
+      + '<a href="#/series" data-r="series">' + SV('<path d="M4 5h7v6H4zM13 5h7v6h-7zM4 13h7v6H4zM13 13h7v6h-7z"/>', 1) + '<span>Серії</span></a>'
+      + '<a href="#/work" data-r="work">' + SV('<path d="M4 19h3V10H4zM10.5 19h3V5h-3zM17 19h3v-6h-3z"/>', 1) + '<span>Робота</span></a>'; };
+  var tgBack = function () { if (document.querySelector('.pl.fsx')) return; if (ps && ps.classList.contains('on')) pageBack(); else location.hash = '#/'; };
+  var tgSync = function () { if (!tg || !tg.BackButton) return; try { if (!tgSync.on) { tg.BackButton.onClick(tgBack); tgSync.on = 1; }
+    if ((ps && ps.classList.contains('on')) || RT != 'home') tg.BackButton.show(); else tg.BackButton.hide(); } catch (x) {} };
+  var pageBack = function () { if (/^#\/s\//.test(location.hash)) { if (navIn) history.back(); else location.hash = '#/' + (RT == 'home' ? '' : RT); } else psClose(); };
+  var route = function () { var h = location.hash.replace(/^#\/?/, ''), m = h.match(/^s\/(\d+)/), nv = document.getElementById('znav');
+    if (nv && !nv.firstChild) nv.innerHTML = NAVH();
+    if (m) { pend = +m[1]; if (D && pjOf(pend)) { openPs(pend); pend = null; } tgSync(); return; }
+    pend = null; if (ps && ps.classList.contains('on')) psClose();
+    var r = h == 'series' ? 'series' : h == 'work' ? 'work' : 'home', ch = r != RT; RT = r;
+    document.body.classList.remove('r-home', 'r-series', 'r-work'); document.body.classList.add('r-' + r);
+    if (nv) [].forEach.call(nv.querySelectorAll('a'), function (a) { a.classList.toggle('on', a.getAttribute('data-r') == r); });
+    var tb = document.querySelector('.hd .w b'); if (tb) tb.textContent = TT[r];
+    if (ch) { try { scrollTo(0, 0); } catch (x) {} [].forEach.call(document.querySelectorAll('#home1,#home2,#cat,#hero,#app'), function (e) { e.classList.remove('rtin'); void e.offsetWidth; e.classList.add('rtin'); }); buzz('light'); }
+    tgSync(); };
+  window.addEventListener('hashchange', function (e) { var toP = /#\/s\//.test(e.newURL || ''), fromP = /#\/s\//.test(e.oldURL || ''); if (toP && !fromP) navIn = true; else if (!toP) navIn = false; route(); });
+  setTimeout(route, 0);
   var ps = null;
   var psClose = function () { if (!ps || !ps.classList.contains('on')) return; var o = ps.querySelector('#plr'); if (o) shut(o); ps.classList.remove('on'); document.documentElement.style.overflow = '';
-    if (tg && tg.BackButton) { try { tg.BackButton.offClick(psClose); tg.BackButton.hide(); } catch (x) {} } };
+    tgSync(); };
   var BKI = function () { return SV('<path d="M15 5l-7 7 7 7"/>', 1); };      // pages-fix1: лише коли SV уже визначено
   var lbox = function (u) { var l = document.getElementById('lb'); if (!l) { l = document.createElement('div'); l.id = 'lb'; document.body.appendChild(l); l.addEventListener('click', function () { l.classList.remove('on'); }); }
     l.innerHTML = '<img src="' + E(u) + '" alt="">'; void l.offsetWidth; l.classList.add('on'); };
@@ -408,7 +461,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var openPs = function (n) { var p = pjOf(n); if (!p) return;      // patch pages: ціла сторінка серії
     if (!ps) { ps = document.createElement('div'); ps.id = 'ps'; document.body.appendChild(ps);
       ps.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b) return; var n2 = +ps.getAttribute('data-n'), q = pjOf(n2);
-        if (b.classList.contains('bk2')) psClose();
+        if (b.classList.contains('bk2')) pageBack();
         else if (b.getAttribute('data-cp') && q) copyTxt(String(q[+b.getAttribute('data-cp')] || ''), b);
         else if (b.getAttribute('data-watch')) watch(n2, ps.querySelector('.hpl'));
         else if (b.getAttribute('data-ct')) seekTo(n2, +b.getAttribute('data-ct'));
@@ -420,7 +473,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     var cur = n == curN(), st = cur ? (finDone() ? '✅ ЗАВЕРШЕНО' : '⏳ У РОБОТІ') : (p[2] ? '✅ ГОТОВО' : '—');
     var ch = []; String(p[6] || '').split('\n').forEach(function (l) { var m = l.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s+(.+)$/);
       if (m) ch.push({s: l.trim().split(' ')[0], t: m[3] ? (+m[1] * 3600 + +m[2] * 60 + +m[3]) : (+m[1] * 60 + +m[2]), name: m[4]}); });
-    var lw = !!(LOC && D.fv && D.fv[n]), cvs = (LOC && D.cv && D.cv[n]) || [];
+    var lw = !!(LOC && D.fv && D.fv[n]), cvs = covList(n);
     var ds = String(p[6] || '').split('\n').filter(function (l) { return !/^\d{1,2}:\d{2}/.test(l.trim()); }).join('\n').replace(/\n{3,}/g, '\n\n').trim();
     ps.setAttribute('data-n', n);
     ps.innerHTML = '<div class="pg2"><div class="tb"><button class="bk2">' + BKI() + 'Назад</button><span>ЗАБРОШКИ ' + n + '</span></div>'
@@ -428,14 +481,14 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       + '<div class="sts"><div><b>' + (p[3] ? fmtD(p[3]) : '—') + '</b><span>ТРИВАЛІСТЬ</span></div><div><b>' + (p[4] || '—') + '</b><span>МІСЦЬ</span></div><div><b>' + E(String(p[5] || '—').slice(0, 5)) + '</b><span>ЗІБРАНО</span></div></div>'
       + (canWatch(n) ? '<button class="wgo" data-watch="' + n + '">▶ Дивитись серію' + (p[3] ? ' · ' + fmtD(p[3]) : '') + '</button>' : '<div class="nt">Повне відео цієї серії відкривається в програмі на ПК.</div>')
       + '<div class="hpl"></div>' + (LOC ? '<button class="opn2" data-open="1">📂 Відкрити теку МОЄ</button>' : '') + CPS(p)
-      + (cvs.length ? '<h2>ОБКЛАДИНКИ</h2><div class="cvg">' + cvs.map(function (c) { return '<button class="cvi" data-img="' + E(D.vb + c[0]) + '"><img src="' + E(D.vb + c[0]) + '" alt="" loading="lazy"><span>' + E(c[1]) + '</span></button>'; }).join('') + '</div>' : '')
+      + (cvs.length ? '<h2>ОБКЛАДИНКИ</h2><div class="cvg">' + cvs.map(function (c) { return '<button class="cvi" data-img="' + E(c[0]) + '"><img src="' + E(c[0]) + '" alt="" loading="lazy"><span>' + E(c[1]) + '</span></button>'; }).join('') + '</div>' : '')
       + (ch.length ? '<h2>РОЗДІЛИ · ' + ch.length + '</h2><div class="chl">' + ch.map(function (c) { return lw ? '<button class="chr" data-ct="' + c.t + '"><b>' + E(c.s) + '</b><span>' + E(c.name) + '</span><i>▶</i></button>'
           : '<div class="chr"><b>' + E(c.s) + '</b><span>' + E(c.name) + '</span></div>'; }).join('') + '</div>' : '')
       + (ds ? '<h2>ОПИС</h2><div class="dsc">' + E(ds) + '</div><button class="more">Показати весь опис ▾</button>' : '')
       + (!p[1] && !ds ? '<div class="nt">Для цієї серії немає файла з назвою й описом (00_НАЗВА_ОПИС.txt) — тут лише відео й дані з теки.</div>' : '')
       + '</div>';
     ps.scrollTop = 0; void ps.offsetWidth; ps.classList.add('on'); document.documentElement.style.overflow = 'hidden'; buzz('light');
-    if (tg && tg.BackButton) { try { tg.BackButton.onClick(psClose); tg.BackButton.show(); } catch (x) {} } };
+    tgSync(); };
   var hero = document.getElementById('hero');
   if (hero) hero.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b || !D) return; var N0 = curN();
     if (b.getAttribute('data-cp')) { var p = pjOf(N0); if (p) copyTxt(String(p[+b.getAttribute('data-cp')] || ''), b); }
@@ -450,13 +503,13 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       + '<div class="pmf">' + 'Натисни на серію — відкриється її сторінка.' + '</div>'; };
   var pmClose = function () { if (pm) pm.classList.remove('on'); if (av) av.classList.remove('opn'); };
   var pmOpen = function () { if (!pm) { pm = document.createElement('div'); pm.id = 'pm'; document.body.appendChild(pm);
-      pm.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('[data-ep]') : null; if (!b) return; var n = +b.getAttribute('data-ep'); pmClose(); openPs(n); }); }
+      pm.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('[data-ep]') : null; if (!b) return; var n = +b.getAttribute('data-ep'); pmClose(); location.hash = '#/s/' + n; }); }
     var r = av.getBoundingClientRect(); pm.style.left = Math.max(12, r.left - 2) + 'px'; pm.style.top = (r.bottom + 10) + 'px';
     pm.innerHTML = pmList(); void pm.offsetWidth; pm.classList.add('on'); av.classList.add('opn'); buzz('light'); };
   if (av) { av.addEventListener('click', function (e) { e.stopPropagation(); if (pm && pm.classList.contains('on')) pmClose(); else pmOpen(); });
     av.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); av.click(); } }); }
   document.addEventListener('click', function (e) { if (pm && pm.classList.contains('on') && !(e.target && e.target.closest && (e.target.closest('#pm') || e.target.closest('#av')))) pmClose(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { pmClose(); if (!(ps && ps.querySelector('#plr')) && !document.querySelector('#lb.on')) psClose(); var l = document.querySelector('#lb.on'); if (l) l.classList.remove('on'); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { pmClose(); if (!(ps && ps.querySelector('#plr')) && !document.querySelector('#lb.on')) pageBack(); var l = document.querySelector('#lb.on'); if (l) l.classList.remove('on'); } });
   window.addEventListener('scroll', function () { if (pm && pm.classList.contains('on')) pmClose(); }, {passive: true});
   var ckSave = function (v) { try { localStorage.setItem('fa_chk', v); } catch (x) {} if (tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('chk', v); } catch (x) {} } };
   var chkUrl = function () { return (!LOC && D && /^https:\/\//.test(D.vb || '') && okG(G)) ? D.vb.replace(/\/v\/?$/, '/chk') : ''; };
@@ -577,7 +630,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 14:35', NEWS = 'Кожна серія — своя сторінка (відео, розділи, обкладинки, опис); на ПК ⏮/⏭ по розділах і кадри під мишею; панель на телефоні оновлюється сама щохвилини', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 14:46', NEWS = 'Тепер це сайт: Головна (банер, цифри, останні серії), Серії (каталог з обкладинками), Робота; у кожної серії своя адреса', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = '<button class="tq">' + XI + '</button>' + E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);      // хрестик прибирає плашку без дії
     toast.onclick = function (e) { toast.classList.remove('on'); if (fn && !(e && e.target && e.target.closest && e.target.closest('.tq'))) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -612,7 +665,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       if (rest.length && d.s && d.s.length) o += '<div class="sub"' + I() + '>ІНШІ ВІДЕО</div>';
       rest.forEach(function (x) { o += '<div class="p"' + I() + '><div class="n"></div><div class="dot"></div><div class="t">' + E(x[1]) + '</div>' + WB(x) + '</div>'; });
       o += '</div>'; }
-    if (IO) IO.disconnect(); app.innerHTML = o + '</div>'; PV = NV; heroUpd(); ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
+    if (IO) IO.disconnect(); app.innerHTML = o + '</div>'; PV = NV; heroUpd(); homeUpd(); if (pend !== null && pjOf(pend)) { openPs(pend); pend = null; tgSync(); } ft.textContent = 'дані на ' + (d.t || '') + (how ? ' · ' + how : '');
     var cs = app.querySelectorAll('.card'), vh = window.innerHeight || 800, i;      // картки нижче екрана чекають, доки до них докрутять; у «тихому» оновленні видимі картки не з'являються заново
     for (i = 0; i < cs.length; i++) { if (IO && cs[i].getBoundingClientRect().top > vh - 24) { cs[i].classList.add('wt'); IO.observe(cs[i]); } else { if (soft) cs[i].classList.add('st'); cnt(cs[i]); } }
   }
