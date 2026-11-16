@@ -139,7 +139,10 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   var P = new URLSearchParams(location.search), G = P.get('g') || '', app = document.getElementById('app'), ft = document.getElementById('ft'), rf = document.getElementById('rf'), pg = document.getElementById('pg'), D = null;
   // 16.11, 00:44 — через Main App (кнопка «Відкрити» в списку чатів) Telegram відкриває сторінку БЕЗ параметрів адреси, тому секретну частину ?g= панель
   // запам'ятовує на цьому пристрої (localStorage) і в сховищі Telegram для цього бота й користувача (CloudStorage), коли її хоч раз відкрили кнопкою з чату
-  try { if (G) localStorage.setItem('fa_g', G); else G = localStorage.getItem('fa_g') || ''; } catch (e) {}
+  // 16.11.2026 — у налаштуваннях бота адреса обрізається до 64 знаків, і від секретної частини лишається 26 із 32. Неповну частину не беремо й не запам'ятовуємо
+  // (раніше вона затирала збережену правильну): панель бере правильну зі сховища, куди та потрапляє, коли панель хоч раз відкрили кнопкою з чату
+  var okG = function (s) { return /^[0-9a-f]{32}$/i.test(s || ''); }; if (!okG(G)) G = '';
+  try { if (G) localStorage.setItem('fa_g', G); else { G = localStorage.getItem('fa_g') || ''; if (!okG(G)) G = ''; } } catch (e) {}
   if (G && tg && tg.CloudStorage && tg.CloudStorage.setItem) { try { tg.CloudStorage.setItem('g', G); } catch (e) {} }
   var E = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); };
   // 16.11.2026 — анімації по всій панелі. PV — попередні значення: числа «доїжджають» від старого до нового, смужки ростуть від старої ширини;
@@ -238,7 +241,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .catch(function (e) { if (CUR === me) { me.log.push('у пам’ять не взялось: ' + ((e && e.message) || e)); direct(); } });
   }
   // версія панелі й повідомлення про оновлення (VER і NEWS ставить tg_miniapp_publish.py)
-  var VER = '16.11 03:21', NEWS = 'Анімації по всій панелі: рядки каскадом, лічильники, хвиля на кнопках, плавний плеєр.', toast = document.getElementById('toast'), tt = null;
+  var VER = '16.11 10:23', NEWS = 'Кнопка «Відкрити» знову працює: обрізана адреса більше не ламає панель.', toast = document.getElementById('toast'), tt = null;
   function say(h1, sub, keep, fn) { toast.innerHTML = E(h1) + (sub ? '<small>' + E(sub) + '</small>' : ''); toast.classList.add('on'); clearTimeout(tt);
     toast.onclick = function () { toast.classList.remove('on'); if (fn) fn(); }; if (!keep) tt = setTimeout(function () { toast.classList.remove('on'); }, 7000); }
   try { var lv = localStorage.getItem('fa_ver'); if (VER && lv && lv != VER) say('✨ Панель оновлено', NEWS || 'Перевстановлювати нічого не треба.'); if (VER) localStorage.setItem('fa_ver', VER); } catch (e) {}
@@ -279,7 +282,7 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       .then(function (t) { return new Promise(function (ok) { setTimeout(function () { ok(t); }, Math.max(0, (soft ? 900 : 650) - (Date.now() - t0))); }); })      // щоб анімацію було видно й на швидкій мережі
       .then(function (t) { render(JSON.parse(t), 'оновлено щойно', soft); again(ft, 'fl'); again(pin, 'ok'); if (tg && tg.HapticFeedback) { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} } })
       .catch(function (e) { ft.textContent = e.message == 'код 404'
-          ? 'Адреса панелі неповна: у ній має бути секретна частина ?g=… із 32 знаків, а прийшло ' + G.length + '. У @BotFather встав посилання повністю — скопіюй його з повідомлення директора.'
+          ? 'дані не знайдено (код 404). Відкрий панель кнопкою «🪟 Панель серії» під закріпленим табло в чаті з ботом.'
           : 'не вдалося оновити (' + e.message + '): нема мережі або забагато запитів — спробуй за хвилину';
         if (!D) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Даних нема — дивись підказку нижче.</div></div>'; })
       .then(function () { rf.disabled = false; rf.classList.remove('on'); app.classList.remove('ld'); pg.classList.remove('on'); });
@@ -292,12 +295,12 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
     var k = pull(); pt.style.transform = 'translate(-50%,' + (k - 52) + 'px) rotate(' + (k * 4) + 'deg)'; pt.style.opacity = Math.min(1, k / 55); pt.classList.toggle('go', k >= 62); }, {passive: true});
   window.addEventListener('touchend', function () { if (y0 === null) return; var k = pull(); y0 = null; pt.style.transform = ''; pt.style.opacity = 0; pt.classList.remove('go'); if (k >= 62) refresh(); }, {passive: true});
   var h = P.get('d') || (location.hash.slice(1).split('&').filter(function (s) { return s && s.indexOf('=') < 0; })[0] || ''), d0 = h ? dec(h) : null;
-  var nodata = function () { if (!D) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Немає даних. Один раз відкрий панель кнопкою «Панель» у чаті з ботом — після цього вона працюватиме й звідси.</div></div>'; };
+  var nodata = function () { if (!D) app.innerHTML = '<div class="card"><div class="note" style="margin:0">Немає даних. Один раз відкрий панель кнопкою «🪟 Панель серії» під закріпленим табло в чаті з ботом — після цього вона працюватиме й звідси.</div></div>'; };
   var start = function () { rf.style.display = ''; refresh(true); };
   rf.addEventListener('click', refresh);
   if (d0) render(d0, '');
   if (G) start();
-  else if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('g', function (err, v) { if (!err && v) { G = v; try { localStorage.setItem('fa_g', G); } catch (e) {} start(); } else nodata(); }); } catch (e) { nodata(); } }
+  else if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('g', function (err, v) { if (!err && okG(v)) { G = v; try { localStorage.setItem('fa_g', G); } catch (e) {} start(); } else nodata(); }); } catch (e) { nodata(); } }
   else nodata();
   app.addEventListener('click', function (e) { var el = e.target; if (!el || !el.getAttribute) return;
     var pv = el.getAttribute('data-p');                                             // плеєр: відео грає просто в панелі; другий дотик — згорнути
