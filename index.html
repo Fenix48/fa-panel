@@ -64,6 +64,9 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
 .pl .sk i{position:absolute;left:0;top:10px;height:4px;border-radius:3px;width:0} .pl .sk .bf{background:rgba(255,255,255,.34)} .pl .sk .pr{background:linear-gradient(90deg,var(--acc),var(--acc2))}
 .pl .sk b{position:absolute;top:5px;left:0;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(214,166,62,.25)}
 .pl.wait:after{content:"";position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px;border:3px solid rgba(255,255,255,.22);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;pointer-events:none}
+.pl .tip{position:absolute;bottom:26px;left:0;transform:translateX(-50%);background:var(--gold);color:#111;font:700 12px/1 inherit;padding:5px 7px;border-radius:7px;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .12s;pointer-events:none;white-space:nowrap}
+.pl.drag .tip{opacity:1} .pl.drag .sk b{transform:scale(1.35)}
+.pl .ld{position:absolute;left:0;right:0;top:50%;margin-top:44px;text-align:center;font-size:12.5px;color:#e9e6df;pointer-events:none}
 .pl:fullscreen{border-radius:0;display:flex;align-items:center;justify-content:center} .pl:fullscreen video{width:100%;height:100%;object-fit:contain}
 .ft{color:var(--dim);font-size:12px;text-align:center;margin-top:14px}
 </style>
@@ -90,15 +93,19 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
   if (tg && tg.CloudStorage && tg.CloudStorage.getItem) { try { tg.CloudStorage.getItem('chk', function (err, v) { if (!err && v) { try { ck = JSON.parse(v) || ck; if (D) render(D, ''); } catch (e) {} } }); } catch (e) {} }
   function fmt(x) { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ':' + ('0' + x % 60).slice(-2); }
   function mkPlayer(w, src) {                                                      // власний плеєр (замість штатних кнопок браузера)
-    w.className = 'pl'; w.innerHTML = '<video playsinline preload="auto"></video><div class="bigp">▶</div><div class="pc"><button class="pb pp">▶</button><span class="tm cur">0:00</span>'
-      + '<div class="sk"><i class="bf"></i><i class="pr"></i><b></b></div><span class="tm dur">0:00</span><button class="pb sp">1×</button><button class="pb fs">⤢</button></div>';
+    w.className = 'pl'; w.innerHTML = '<video playsinline preload="auto"></video><div class="bigp">▶</div><div class="ld"></div><div class="pc"><button class="pb pp">▶</button><span class="tm cur">0:00</span>'
+      + '<div class="sk"><i class="bf"></i><i class="pr"></i><b></b><span class="tip">0:00</span></div><span class="tm dur">0:00</span><button class="pb sp">1×</button><button class="pb fs">⤢</button></div>';
     var q = function (c) { return w.querySelector(c); }, v = q('video'), pp = q('.pp'), sk = q('.sk'), pr = q('.pr'), bf = q('.bf'), kn = sk.querySelector('b'), cur = q('.cur'), dur = q('.dur'), sp = q('.sp'), fs = q('.fs');
-    var hid = null, drag = false, rates = [1, 1.25, 1.5, 2], ri = 0, last = 0;
+    var hid = null, drag = false, rates = [1, 1.25, 1.5, 2], ri = 0, last = 0, tip = q('.tip'), ld = q('.ld'), want = null, was = false;
     var show = function () { w.classList.remove('idle'); clearTimeout(hid); if (!v.paused) hid = setTimeout(function () { if (!drag) w.classList.add('idle'); }, 2600); };
     var tog = function () { if (v.paused) { var pz = v.play(); if (pz && pz.catch) pz.catch(function () {}); } else v.pause(); };
-    var upd = function () { var d = v.duration || 0, x = d ? v.currentTime / d : 0; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(v.currentTime); dur.textContent = fmt(d);
+    var upd = function () { if (drag) return; var d = v.duration || 0, x = d ? v.currentTime / d : 0; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; cur.textContent = fmt(v.currentTime); dur.textContent = fmt(d);
       if (d && v.buffered.length) bf.style.width = (v.buffered.end(v.buffered.length - 1) / d * 100) + '%'; };
-    var seek = function (e) { var r = sk.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); if (v.duration) { v.currentTime = x * v.duration; upd(); } };
+    // перемотка: поки тягнеш — кадр міняється одразу (наступний стрибок ставиться, щойно браузер показав попередній), над повзунком час
+    var go = function () { if (want === null || v.seeking) return; var t = want; want = null; try { v.currentTime = t; } catch (x) {} };
+    v.addEventListener('seeked', go);
+    var seek = function (e) { var r = sk.getBoundingClientRect(), x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), d = v.duration || 0; if (!d) return;
+      want = x * d; pr.style.width = (x * 100) + '%'; kn.style.left = (x * 100) + '%'; tip.style.left = (x * 100) + '%'; tip.textContent = fmt(want); cur.textContent = fmt(want); go(); };
     v.addEventListener('play', function () { w.classList.add('on'); pp.textContent = '❚❚'; show(); });
     v.addEventListener('pause', function () { w.classList.remove('on'); pp.textContent = '▶'; show(); });
     ['timeupdate', 'progress', 'loadedmetadata', 'durationchange'].forEach(function (n) { v.addEventListener(n, upd); });
@@ -107,15 +114,24 @@ button{appearance:none;border:0;border-radius:12px;background:var(--acc);color:#
       if (now - last < 330 && (x < .35 || x > .65)) { v.currentTime = Math.max(0, Math.min(v.duration || 0, v.currentTime + (x < .5 ? -10 : 10))); tog(); last = 0; show(); return; }      // подвійний дотик збоку: ∓10 с
       last = now; if (w.classList.contains('idle')) show(); else tog(); });
     q('.bigp').addEventListener('click', tog); pp.addEventListener('click', tog);
-    sk.addEventListener('pointerdown', function (e) { drag = true; try { sk.setPointerCapture(e.pointerId); } catch (x) {} seek(e); show(); });
+    sk.addEventListener('pointerdown', function (e) { drag = true; was = !v.paused; if (was) v.pause(); w.classList.add('drag'); try { sk.setPointerCapture(e.pointerId); } catch (x) {} seek(e); show(); });
     sk.addEventListener('pointermove', function (e) { if (drag) seek(e); });
-    ['pointerup', 'pointercancel'].forEach(function (n) { sk.addEventListener(n, function () { drag = false; show(); }); });
+    ['pointerup', 'pointercancel'].forEach(function (n) { sk.addEventListener(n, function () { if (!drag) return; drag = false; w.classList.remove('drag'); if (was) tog(); show(); }); });
     sp.addEventListener('click', function () { ri = (ri + 1) % rates.length; v.playbackRate = rates[ri]; sp.textContent = String(rates[ri]).replace('.', ',') + '×'; show(); });
     fs.addEventListener('click', function () { var d = document; show();
       if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
       if (w.requestFullscreen) { var z = w.requestFullscreen(); if (z && z.then) z.then(function () { try { screen.orientation.lock('landscape').catch(function () {}); } catch (x) {} }).catch(function () {}); }
       else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen(); });
-    v.src = src; tog();
+    // файл — цілком у пам'ять (тоді перемотка працює всюди); не вийшло — граємо напряму, як раніше
+    var direct = function () { ld.textContent = ''; v.src = src; tog(); };
+    if (!window.fetch || !window.ReadableStream) { direct(); return; }
+    w.classList.add('wait'); ld.textContent = 'завантажую…';
+    fetch(src).then(function (r) { if (!r.ok || !r.body) throw new Error('x'); var n = +r.headers.get('Content-Length') || 0, got = 0, parts = [], rd = r.body.getReader();
+      var step = function () { return rd.read().then(function (z) { if (z.done) return new Blob(parts, {type: 'video/mp4'}); parts.push(z.value); got += z.value.length;
+        ld.textContent = n ? 'завантажую ' + Math.round(got / n * 100) + ' %' : 'завантажую ' + (got / 1048576).toFixed(1).replace('.', ',') + ' МБ'; return step(); }); };
+      return step(); })
+      .then(function (b) { if (!w.isConnected) return; w.classList.remove('wait'); ld.textContent = ''; v.src = URL.createObjectURL(b); tog(); })
+      .catch(function () { if (w.isConnected) { w.classList.remove('wait'); direct(); } });
   }
   function dec(h) { try { return JSON.parse(decodeURIComponent(escape(atob(h.replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return null; } }
   function render(d, how) {
